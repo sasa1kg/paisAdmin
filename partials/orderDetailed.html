@@ -1,0 +1,198 @@
+ <div id="wrapper">
+
+        <div ng-include="'partials/navigation.html'">
+        </div>
+
+        <div id="page-wrapper">
+
+            <div class="container-fluid">
+
+                <!-- Page Heading -->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h1 class="page-header">
+                            Order <small>Single order details <a class="btn btn-primary pull-right" href="#/orders">All orders</a><a class="btn btn-primary pull-right btn-margin-right" href="#/users">All Clients</a></small>
+                        </h1>  
+                    </div>
+                </div>
+                <!-- /.row -->
+
+                  <div class="row">
+                    <div class="col-lg-12">
+                        <div class="table-responsive">
+                            
+                        
+                        <div class="col-lg-6">
+                            <div class="panel panel-default panelSmallBorderTop">
+                                    <div class="panel-heading panelSmallTop">
+                                        <h4>{{selectedDetailed.name}}<h4>
+                                    </div>
+                                    <div class="panel-body" ng-show="!loaded">
+                                        <p>Loading order details...</p>
+                                       
+                                    </div>
+                                    <div class="panel-body" ng-show="loaded">
+                                        <div class="panel panel-default panelSmallBorderTop" ng-show="selectedDetailed.description.length > 0">
+                                            <div class="panel-heading panelSmallTop">
+                                                <p>Description/Additional remarks<p>
+                                            </div>
+                                            <div class="panel-body">
+                                                {{selectedDetailed.description}}
+                                            </div>
+                                        </div>
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                <h5>Ordered By: {{selectedDetailedUser.first_name}} {{selectedDetailedUser.last_name}}<h5>
+                                            </div>
+                                            <div class="panel-body">
+                                                <p>Username: {{selectedDetailedUser.username}}</p>
+                                                <p>Email: {{selectedDetailedUser.email}}</p>
+                                                <p>Country: {{selectedDetailedUser.country_code}}</p>
+                                                <p>Phone: {{selectedDetailedUser.phone}}</p>
+                                            </div>
+                                        </div>
+                                        <h4 ng-if="selectedDetailed.polygons.length>0">Images</h4>
+                                        <div class="panel panel-default panelSmallBorder" ng-repeat="ter in selectedDetailed.polygons">
+                                            <div class="panel-heading panelSmall">
+                                                <h5>Territory {{ter.polygon_id}}<h5>
+                                            </div>
+                                            <div class="panel-body">
+                                                <p>Description/Additional remark: {{ter.description}}</p>
+                                                <p>Surface: {{ter.surface}}</p>
+                                                <table class="table table-bordered table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Latitude</th>
+                                                            <th>Longitude</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr ng-repeat="coord in ter.coordinates">
+                                                            <td>{{coord.latitude}}</td>
+                                                            <td>{{coord.longitude}}</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <h4 ng-if="selectedDetailed.sensors.length>0">Sensors</h4>
+                                        <div class="panel panel-default panelSmallBorderSen" ng-repeat="sen in selectedDetailed.sensors">
+                                            <div class="panel-heading panelSmallSen">
+                                                <h5>Sensor {{sen.sensor_id}}<h5>
+                                            </div>
+                                            <div class="panel-body">
+                                                <p>Description/Additional remarks: {{sen.description}}</p>
+                                                <p>Type: {{getSensorTypeName(sen.type_id)}}</p>
+                                                <p>UOM: {{getUOMName(sen.uom_id)}}</p>
+                                                <span class="badge activeBadge" ng-show="sen.active==1">Active</span><span class="badge notActiveBadge" ng-show="sen.active==0">Not active</span>
+                                                <table class="table table-bordered table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Latitude</th>
+                                                            <th>Longitude</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>{{sen.latitude}}</td>
+                                                            <td>{{sen.longitude}}</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                         
+                                    </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <div class="panel panel-default panelSmallBorderTop">
+                                        <div class="panel-heading panelSmallTop">
+                                            <h4>Status<h4>
+                                        </div>
+                                        <div class="panel-body">
+                                            <p><span class="badge" ng-show="selectedDetailed.status == 0"> Inactive</span></p>
+                                            <p><span class="badge activeBadge" ng-show="selectedDetailed.status == 1"> Active</span></p>
+                                            <p><span class="badge" ng-show="selectedDetailed.status == 2"> Status 2</span></p>
+                                            <p><span class="badge" ng-show="selectedDetailed.status == 3"> Status 3</span></p>
+                                        </div>
+                            </div>
+                            <div class="panel panel-default panelSmallBorderTop">
+                                    <div class="panel-heading panelSmallTop">
+                                        <h4>Actions<h4>
+                                    </div>
+                                    <div class="panel-body">
+                                        <p>Send invoice to user</p>
+                                        <button class="btn btn-primary" ngf-select="uploadFiles($files)">Select Invoice</button>
+                                        <table class="table table-striped table-hover">
+                                        <thead>
+                                        <tr>
+                                            <th>File</th>
+                                            <th>Progress</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr ng-repeat="f in files" style="font:smaller">
+                                            <td>{{f.name}} {{f.$error}} {{f.$errorParam}}</td>
+                                            <td><span class="progress" ng-show="f.progress >= 0">
+                                            <div style="width:{{f.progress}}%"  
+                                                ng-bind="f.progress + '%'"></div></td>
+                                        </tr>
+                                        </tbody>
+                                        </table>
+                                        <hr>
+                                        <p ng-show="selectedDetailed.status == 2">Assign order to operator</p>
+                                        <select ng-show="selectedDetailed.status == 2" class="form-control" ng-model="selectedOperator">
+                                             <option
+                                                ng-repeat="operator in operators"
+                                                value="{{operator.id}}">
+                                                {{operator.first_name}} {{operator.last_name}} [{{operator.company_name}}]
+                                             </option>
+                                        </select>
+                                        <button ng-show="selectedDetailed.status == 2" class="btn btn-primary pulltop_btn">Assign</button>
+                                       
+                                    </div>
+                            </div>
+                            <div class="panel panel-default panelSmallBorderTop">
+                                        <div class="panel-heading panelSmallTop">
+                                            <h4>Results<h4>
+                                        </div>
+                                        <div class="panel-body">
+                                            <p>Sensor Readings</p>
+                                            <table class="table table-bordered table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Type</th>
+                                                            <th>Description</th>
+                                                            <th></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr ng-repeat="sen in selectedDetailed.sensors">
+                                                            <td>{{getSensorTypeName(sen.type_id)}}</td>
+                                                            <td>{{sen.description}}</td>
+                                                            <td><a class="cursorchg" href="#/sensorReadings/{{selectedDetailedUser.id}}/{{selectedDetailed.order_id}}/{{sen.sensor_id}}/"><span class="glyphicon glyphicon-equalizer"></span> Go to results</a></td>
+                                                        </tr>
+                                                    </tbody>
+                                            </table>
+                                            <p>Dron Images</p>
+                                        </div>
+                            </div>
+                        </div>
+
+                        </div>
+                    </div>
+                </div>
+                <!-- /.row -->
+
+             
+
+            </div>
+            <!-- /.container-fluid -->
+
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->

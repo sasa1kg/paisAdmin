@@ -20,6 +20,8 @@
     "angular-oauth2": "~3.0.1",
     "bootstrap-magnify": "~0.3.0",
     "angular-image-zoom": "~0.2.0",
-    "ng-magnify": "*"
+    "ng-magnify": "*",
+    "angular-morris-chart": "~1.1.0",
+    "angular-chart.js": "~0.8.4"
   }
 }

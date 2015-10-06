@@ -1,0 +1,83 @@
+ <div id="wrapper">
+
+        <div ng-include="'partials/navigation.html'">
+        </div>
+
+        <div id="page-wrapper">
+
+            <div class="container-fluid">
+
+                <!-- Page Heading -->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h1 class="page-header">
+                            Clients <small>New client</small>
+                        </h1>
+                    </div>
+                </div>
+                <!-- /.row -->
+
+                <div class="row">
+                    <div class="col-lg-12">
+                            <div class="alert alert-success" ng-show="!register && reg_success">
+                                <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                <strong>{{selected.username}}</strong> User created
+                            </div>
+                        <div class="col-lg-8">
+                            <div class="panel panel-default">
+                                    <div class="panel-body">
+                                        <div class="input-group pulltop">
+                                          <span class="input-group-addon">
+                                            <input type="checkbox" ng-model="selectedActive">
+                                          </span>
+                                          <input type="text" class="form-control" ng-disabled="true" placeholder="Account active">
+                                        </div>
+
+                                        <p>Type</p>
+                                        <select class="form-control pulltop" ng-model="selected.type_id">
+                                             <option ng-selected="{{selected.type_id == type.id}}"
+                                                ng-repeat="type in accountTypes"
+                                                value="{{type.id}}">
+                                                {{type.name}}
+                                             </option>
+                                        </select>
+                                        <p>Username</p>
+                                        <input class="form-control pulltop" ng-model="selected.username">
+                                        <p>E-mail</p>
+                                        <input class="form-control pulltop" ng-model="selected.email">
+                                        <p>Password</p>
+                                        <input class="form-control pulltop" ng-model="selected.password">
+                                        <p>First name</p>
+                                        <input class="form-control pulltop" ng-model="selected.first_name">
+                                        <p>Last name</p>
+                                        <input class="form-control pulltop" ng-model="selected.last_name">
+                                        <p>Country</p>
+                                        <select class="form-control pulltop" ng-model="selected.country_code">
+                                             <option ng-selected="{{selected.country_code == country.id}}"
+                                                ng-repeat="country in countries"
+                                                value="{{country.id}}">
+                                                [{{country.id}}] {{country.name}}
+                                             </option>
+                                        </select> 
+                                        <p>Phone</p> 
+                                        <input class="form-control pulltop" ng-model="selected.phone">
+                                        <button ng-click="createAccount()" class="btn btn-primary saveButton pulltop pull-right">CREATE</button>
+                                        <hr class="pulltop">
+                                    </div>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.row -->
+
+             
+
+            </div>
+            <!-- /.container-fluid -->
+
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->

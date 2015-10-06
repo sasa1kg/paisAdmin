@@ -1,0 +1,189 @@
+ <div id="wrapper">
+
+        <div ng-include="'partials/navigation.html'">
+        </div>
+
+        <div id="page-wrapper">
+
+            <div class="container-fluid">
+
+    <script type="text/ng-template" id="editUOM.html">
+        <div>
+
+            <!-- Modal content-->
+            <div>
+                <div class="modal-header">
+                    <button type="button" class="close" ng-click="dismissModal()">&times;</button>
+                    <h4 class="modal-title">Edit UOM</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Name</p>
+                    <input class="form-control pulltop" ng-model="uom.name">
+                    <p>Quantity</p>
+                    <input class="form-control pulltop" ng-model="uom.quantity">
+                    <p>Level</p>
+                    <input class="form-control pulltop" ng-model="uom.level">
+                    <p>Symbol</p>
+                    <input class="form-control pulltop" ng-model="uom.symbol">
+                    <p>Sensor Type</p>
+                                    <select class="form-control" ng-model="uom.type_id">
+                                             <option
+                                                ng-repeat="type in sensorTypes"
+                                                value="{{type.id}}" ng-selected="uom.type_id == type.id">
+                                                {{type.name}}
+                                             </option>
+                                        </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" ng-click="saveChanges()">
+                        Save changes
+                    </button>
+                    <button type="button" class="btn btn-danger" ng-click="removeUOM()">
+                        Delete UOM
+                    </button>
+                    <button type="button" class="btn btn-default pull-right" ng-click="dismissModal()">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </script>
+                <!-- Page Heading -->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h1 class="page-header">
+                            Sensors <small>Settings</small>
+                        </h1>
+                    </div>
+                </div>
+                <!-- /.row -->
+
+                  <div class="row">
+                    <div class="col-lg-12">
+                        <h2>Sensors</h2>
+                            <div class="alert alert-success" ng-show="!save && save_success">
+                                <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                <strong>{{selected.username}}</strong> Changes saved
+                            </div>
+                        <div class="table-responsive">
+                            <div class="col-lg-6">
+                            <div class="panel panel-default">
+                            	<div class="panel-heading">
+                                        <h5>Add new sensor <span class="pull-right cursorchg" ng-click="toggleAddPanel()">Toggle</span><h5>
+                                </div>
+                                <div class="panel-body" ng-show="addPanelShow">
+                                	<p>Name</p>
+                                    <input class="form-control pulltop" ng-model="newType.name">
+                                    <p>Description</p>
+                                    <input class="form-control pulltop" ng-model="newType.description">
+                                    <!--<p>UOMs</p>
+                                    <div class="input-group pulltop">
+                                        <select class="form-control" ng-model="uomToAdd">
+                                             <option ng-selected="{{uom.id == uomToAdd}}"
+                                                ng-repeat="uom in availableUOMs"
+                                                value="{{uom.id}}">
+                                                <b>{{uom.name}}</b> [{{uom.level}} {{uom.symbol}} | {{uom.quantity}}]
+                                             </option>
+                                        </select>
+                                        <span class="input-group-addon cursorchg" id="basic-addon2" ng-click="addUOM()">Add UOM</span>
+                                    </div>
+                                    <ul>
+                                    	<li ng-repeat="addedUOM in newType.uoms"><span class="glyphicon glyphicon-remove-sign cursorchg" ng-click="removeUOM(addedUOM.id)"></span> {{addedUOM.name}}</li>
+                                    </ul>
+                                    -->
+                                    <button class="btn btn-primary pulltop" ng-click="addNewType()">Add new type</button>
+                                </div>
+                            </div>
+                            <div class="panel panel-default">
+                            	<div class="panel-heading">
+                                        <h5>Add new UOM <span class="pull-right cursorchg" ng-click="toggleUOMPanel()">Toggle</span><h5>
+                                </div>
+                                <div class="panel-body" ng-show="addUOMShow">
+                                	<p>Name</p>
+                                    <input class="form-control pulltop" ng-model="newUOM.name">
+                                    <p>Quantity</p>
+                                    <input class="form-control pulltop" ng-model="newUOM.quantity">
+                                    <p>Level</p>
+                                    <input class="form-control pulltop" ng-model="newUOM.level">
+                                    <p>Symbol</p>
+                                    <input class="form-control pulltop" ng-model="newUOM.symbol">
+                                    <p>Sensor Type</p>
+                                    <select class="form-control" ng-model="newUOM.type_id">
+                                             <option
+                                                ng-repeat="type in sensorTypes"
+                                                value="{{type.id}}">
+                                                {{type.name}}
+                                             </option>
+                                        </select>
+                                    <button class="btn btn-primary pulltop" ng-click="addNewUOM()">Add new UOM</button>
+                                </div>
+                            </div>
+                            <hr>
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                        <th>Number of UOMs</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="sensor in sensorTypes" ng-click="select(sensor.id)" ng-class="{'active' : isActive(sensor.id)}">
+                                        <td><span class="glyphicon glyphicon-remove-sign cursorchg" ng-click="removeType(sensor.id)"></span> {{sensor.id}}</td>
+                                        <td>{{sensor.name}}</td>
+                                        <td>{{sensor.uoms.length}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h5>Details | {{selected.name}}<h5>
+                                    </div>
+                                    <div class="panel-body">
+                                    	<p>Name</p>
+                                        <input class="form-control pulltop" ng-model="selected.name">
+                                        <p>Description</p>
+                                        <input class="form-control pulltop" ng-model="selected.description">
+                                        <button class="btn btn-primary pull-right pulltop" ng-click="saveChangesType()">Save changes</button>
+                                        </br>
+                                        <p class="pulltop">UOMs</p>
+                                        <table class="table table-bordered table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>Name</th>
+                                                    <th>Quantity</th>
+                                                    <th>Level</th>
+                                                    <th>Symbol</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr ng-repeat="uom in selected.uoms">
+                                                    <td>{{uom.name}}</td>
+                                                    <td>{{uom.quantity}}</td>
+                                                    <td>{{uom.level}}</td>
+                                                    <td>{{uom.symbol}}</td>
+                                                    <td><a class="cursorchg" ng-click="showUOMModal(uom.id)"><span class="glyphicon glyphicon-edit cursorchg"></span> Edit
+                                                    </a></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                   
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.row -->
+
+             
+
+            </div>
+            <!-- /.container-fluid -->
+
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->

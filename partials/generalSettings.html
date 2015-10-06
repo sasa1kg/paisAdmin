@@ -1,0 +1,115 @@
+ <div id="wrapper">
+
+        <div ng-include="'partials/navigation.html'">
+        </div>
+
+        <div id="page-wrapper">
+
+            <div class="container-fluid">
+
+                <!-- Page Heading -->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h1 class="page-header">
+                            Geographical entities <small>Settings</small>
+                        </h1>
+                    </div>
+                </div>
+                <!-- /.row -->
+
+                  <div class="row">
+                    <div class="col-lg-12">
+                        
+                            <div class="alert alert-success" ng-show="!save && save_success">
+                                <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                <strong>{{selected.username}}</strong> Changes saved
+                            </div>
+                        <div class="table-responsive">
+                            <div class="col-lg-6">
+                            <h2>Countries</h2>
+                            <div class="panel panel-default">
+                            	<div class="panel-heading">
+                                        <h5>Add new country<h5>
+                                </div>
+                                <div class="panel-body">
+                                	<p>Name</p>
+                                    <input class="form-control pulltop" ng-model="newCountry.name">
+                                    <p>Country code</p>
+                                    <input class="form-control pulltop" ng-model="newCountry.id">
+                                    <button class="btn btn-primary pulltop" ng-click="addNewCountry()">Add new country</button>
+                                </div>
+                            </div>
+                            <hr>
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>Country</th>
+                                        <th>Country code</th>
+                                        <th>Active</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="country in countries">
+                                        <td><span class="glyphicon glyphicon-remove-sign cursorchg" ng-click="deleteCountry(country.id)"></span> Delete</td>
+                                        <td>{{country.name}}</td>
+                                        <td>{{country.id}}</td>
+                                        <td><span class="glyphicon glyphicon-ok cursorchg" ng-click="toggleStatus(country.id)" ng-show="country.active == 0"> Activate</span><span class="glyphicon glyphicon-remove cursorchg" ng-click="toggleStatus(country.id)" ng-show="country.active == 1"> Deactivate</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        	
+                        </div>
+                        <div class="col-lg-6">
+                        	<h2>Cities</h2>
+                            <div class="panel panel-default">
+                            	<div class="panel-heading">
+                                        <h5>Add new city<h5>
+                                </div>
+                                <div class="panel-body">
+                                	<p>Name</p>
+                                    <input class="form-control pulltop" ng-model="newCity.name">
+                                    <p>Country</p>
+                                    <select class="form-control pulltop" ng-model="newCity.country_id">
+                                             <option
+                                                ng-repeat="country in countries"
+                                                value="{{country.id}}">
+                                                [{{country.id}}] {{country.name}}
+                                             </option>
+                                        </select>
+                                    <button class="btn btn-primary pulltop" ng-click="addNewCity()">Add new city</button>
+                                </div>
+                            </div>
+                            <hr>
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>City name</th>
+                                        <th>Country code</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="city in cities">
+                                        <td><span class="glyphicon glyphicon-remove-sign cursorchg" ng-click="deleteCity(city.id)"></span> Delete</td>
+                                        <td>{{city.name}}</td>
+                                        <td>{{city.country_id}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.row -->
+
+             
+
+            </div>
+            <!-- /.container-fluid -->
+
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->

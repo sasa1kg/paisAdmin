@@ -1,143 +1,7 @@
  <div id="wrapper">
 
-        <!-- Navigation -->
-        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="index.html">PAIS Admin</a>
-            </div>
-            <!-- Top Menu Items -->
-            <ul class="nav navbar-right top-nav">
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-envelope"></i> <b class="caret"></b></a>
-                    <ul class="dropdown-menu message-dropdown">
-                        <li class="message-preview">
-                            <a href="#">
-                                <div class="media">
-                                    <span class="pull-left">
-                                        <img class="media-object" src="http://placehold.it/50x50" alt="">
-                                    </span>
-                                    <div class="media-body">
-                                        <h5 class="media-heading"><strong>{{adminName}}</strong>
-                                        </h5>
-                                        <p class="small text-muted"><i class="fa fa-clock-o"></i> Yesterday at 4:32 PM</p>
-                                        <p>Lorem ipsum dolor sit amet, consectetur...</p>
-                                    </div>
-                                </div>
-                            </a>
-                        </li>
-                        <li class="message-preview">
-                            <a href="#">
-                                <div class="media">
-                                    <span class="pull-left">
-                                        <img class="media-object" src="http://placehold.it/50x50" alt="">
-                                    </span>
-                                    <div class="media-body">
-                                        <h5 class="media-heading"><strong>John Smith</strong>
-                                        </h5>
-                                        <p class="small text-muted"><i class="fa fa-clock-o"></i> Yesterday at 4:32 PM</p>
-                                        <p>Lorem ipsum dolor sit amet, consectetur...</p>
-                                    </div>
-                                </div>
-                            </a>
-                        </li>
-                        <li class="message-preview">
-                            <a href="#">
-                                <div class="media">
-                                    <span class="pull-left">
-                                        <img class="media-object" src="http://placehold.it/50x50" alt="">
-                                    </span>
-                                    <div class="media-body">
-                                        <h5 class="media-heading"><strong>John Smith</strong>
-                                        </h5>
-                                        <p class="small text-muted"><i class="fa fa-clock-o"></i> Yesterday at 4:32 PM</p>
-                                        <p>Lorem ipsum dolor sit amet, consectetur...</p>
-                                    </div>
-                                </div>
-                            </a>
-                        </li>
-                        <li class="message-footer">
-                            <a href="#">Read All New Messages</a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-bell"></i> <b class="caret"></b></a>
-                    <ul class="dropdown-menu alert-dropdown">
-                        <li>
-                            <a href="#">Alert Name <span class="label label-default">Alert Badge</span></a>
-                        </li>
-                        <li>
-                            <a href="#">Alert Name <span class="label label-primary">Alert Badge</span></a>
-                        </li>
-                        <li>
-                            <a href="#">Alert Name <span class="label label-success">Alert Badge</span></a>
-                        </li>
-                        <li>
-                            <a href="#">Alert Name <span class="label label-info">Alert Badge</span></a>
-                        </li>
-                        <li>
-                            <a href="#">Alert Name <span class="label label-warning">Alert Badge</span></a>
-                        </li>
-                        <li>
-                            <a href="#">Alert Name <span class="label label-danger">Alert Badge</span></a>
-                        </li>
-                        <li class="divider"></li>
-                        <li>
-                            <a href="#">View All</a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="dropdown">
-                    <a class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> {{adminName}} <b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                        <li>
-                            <a href="#"><i class="fa fa-fw fa-user"></i> Profil</a>
-                        </li>
-                        <li>
-                            <a href="#"><i class="fa fa-fw fa-envelope"></i> Inbox</a>
-                        </li>
-                        <li>
-                            <a href="#"><i class="fa fa-fw fa-gear"></i> Podesavanja</a>
-                        </li>
-                        <li class="divider"></li>
-                        <li>
-                            <a href="#"><i class="fa fa-fw fa-power-off"></i> Izadji</a>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-            <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
-            <div class="collapse navbar-collapse navbar-ex1-collapse">
-                <ul class="nav navbar-nav side-nav">
-                        <li>
-                            <a href="#/mainPage"><i class="fa fa-fw fa-dashboard"></i> Glavni panel</a>
-                        </li>
-                        <li class="active">
-                            <a href="#/operators"><i class="fa fa-fw fa-truck"></i> Operateri</a>
-                        </li>
-                        <li>
-                            <a href="#/users"><i class="fa fa-fw fa-user"></i> Korisnici</a>
-                        </li>
-                        <li>
-                            <a href="#/orders"><i class="fa fa-fw fa-globe"></i> Narudžbine</a>
-                        </li>
-                        <li>
-                            <a href="#/transactions"><i class="fa fa-fw fa-money"></i> Transakcije</a>
-                        </li>
-                        <li>
-                            <a href="#/settings"><i class="fa fa-fw fa-wrench"></i> Podešavanja</a>
-                        </li>
-                </ul>
-            </div>
-            <!-- /.navbar-collapse -->
-        </nav>
+        <div ng-include="'partials/navigation.html'">
+        </div>
 
         <div id="page-wrapper">
 
@@ -147,34 +11,109 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <h1 class="page-header">
-                            Operateri <small>Lista operatera</small>
+                            Operators <small>Settings</small>
                         </h1>
                     </div>
                 </div>
                 <!-- /.row -->
 
-                <div class="row">
+                  <div class="row">
                     <div class="col-lg-12">
-                        <h2>Operateri <a href="#" class="btn btn-info pull-right" role="button">Novi operater</a></h2>
+                        
+                            <div class="alert alert-success" ng-show="!save && save_success">
+                                <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                <strong>{{selected.username}}</strong> Changes saved
+                            </div>
                         <div class="table-responsive">
+                            <div class="col-lg-6">
+                            <h2>Operator companies</h2>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                        <h5>Add new company <span class="pull-right cursorchg" ng-click="toggleNewCompany()">Toggle</span><h5>
+                                </div>
+                                <div class="panel-body" ng-show="newCompanyPanel">
+                                    <p>Name</p>
+                                    <input class="form-control pulltop" ng-model="newCompany.name">
+                                    <p>City</p>
+                                    <select class="form-control pulltop" ng-model="newCompany.city_id">
+                                             <option
+                                                ng-repeat="city in cities"
+                                                value="{{city.id}}">
+                                                [{{city.country_id}}] {{city.name}}
+                                             </option>
+                                    </select>
+                                    <button class="btn btn-primary pulltop" ng-click="addNewCompany()">Add new company</button>
+                                </div>
+                            </div>
+                            <hr>
+                            <h4>Companies</h4>
                             <table class="table table-bordered table-hover">
                                 <thead>
                                     <tr>
-                                        <th>Operater</th>
-                                        <th>Dodeljenih zadataka</th>
-                                        <th>Završenih zadataka</th>
-                                        <th>% Završeno</th>
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                        <th>City</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr ng-repeat="operater in operaters">
-                                        <td>{{operater.username}}</td>
-                                        <td>{{operater.tasksAssigned}}</td>
-                                        <td>{{operater.tasksCompleted}}</td>
-                                        <td>{{operater.tasksCompleted / operater.tasksAssigned  | percentage:2}}</td>
+                                    <tr ng-repeat="company in companies" ng-click="select(company.id)" ng-class="{'active' : isActive(company.id)}">
+                                        <td><span class="glyphicon glyphicon-remove-sign cursorchg" ng-click="removeCompany(company.id)"></span> Delete</td>
+                                        <td>{{company.name}}</td>
+                                        <td>{{company.city_name}}</td>
                                     </tr>
                                 </tbody>
                             </table>
+                            
+                        </div>
+                        <div class="col-lg-6">
+                            <h2>Operators</h2>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                        <h5>Add new operator <span class="pull-right cursorchg" ng-click="toggleNewOperator()">Toggle</span><h5>
+                                </div>
+                                <div class="panel-body" ng-show="newOperatorPanel">
+                                    <p>First name</p>
+                                    <input class="form-control pulltop" ng-model="newOperator.first_name">
+                                    <p>Last name</p>
+                                    <input class="form-control pulltop" ng-model="newOperator.last_name">
+                                    <p>Username</p>
+                                    <input class="form-control pulltop" ng-model="newOperator.username">
+                                    <p>Password</p>
+                                    <input class="form-control pulltop" ng-model="newOperator.password">
+                                    <p>Phone</p>
+                                    <input class="form-control pulltop" ng-model="newOperator.phone">
+                                    <p>E-mail</p>
+                                    <input class="form-control pulltop" ng-model="newOperator.email">
+                                    <p>Company</p>
+                                    <select class="form-control pulltop" ng-model="newOperator.company_id">
+                                             <option
+                                                ng-repeat="company in companies"
+                                                value="{{company.id}}">
+                                                {{company.name}}
+                                             </option>
+                                    </select>
+                                    <button class="btn btn-primary pulltop" ng-click="addNewOperator()">Add new operator</button>
+                                </div>
+                            </div>
+                            <hr>
+                            <h4>Operators from {{selected.name}}</h4>
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                        <th>Username</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="operator in operators">
+                                        <td><span class="glyphicon glyphicon-remove-sign cursorchg" ng-click="removeOperator(operator.id)"></span> {{operator.id}}</td>
+                                        <td><a href="#/operatorDetailed/{{operator.id}}/">{{operator.first_name}} {{operator.last_name}}</a></td>
+                                        <td>{{operator.username}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                         </div>
                     </div>
                 </div>

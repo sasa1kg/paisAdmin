@@ -9,6 +9,10 @@ body{
 .pulltop {
 }
 
+.pulltop_btn {
+	margin-top: 10px;
+}
+
 .fullwidth {
 	width: 100%;
 }
@@ -71,9 +75,9 @@ body{
 	background-color: #888888 !important;
 	cursor: pointer;
 }
-li.active {
-	background:blue; 
-	color:white;
+.active {
+	background-color:blue !important; 
+	color:black;
 }
 .map {
 	margin-top: 10px;
@@ -122,4 +126,46 @@ li.active {
 }
 .cursorchg {
 	cursor: pointer;
+}
+.pulltop {
+	margin-top: 3px;
+	margin-bottom: 3px;
+}
+.saveButton {
+	margin-bottom: 10px !important;
+}
+.activeBadge {
+	background-color: green !important;
+}
+.notActiveBadge {
+	background-color: red !important;
+}
+.panelSmall {
+	background-color: blue !important;
+	color: white !important;
+}
+.panelSmallBorder {
+	border: 2px solid blue !important;
+}
+
+.panelSmallSen {
+	background-color: red !important;
+	color: white !important;
+}
+.panelSmallBorderSen {
+	border: 2px solid red !important;
+}
+.panelSmallTop {
+	background-color: #222 !important;
+	color: white !important;
+}
+.panelSmallBorderTop {
+	border: 2px solid #222 !important;
+}
+.btn-margin-right {
+	margin-right: 10px;
+}
+.activePagging {
+	color: white !important;
+	background-color: #202 !important;
 }
