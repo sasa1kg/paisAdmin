@@ -42,6 +42,16 @@ angular.module('adminApp').controller("mainPageCtrl", ["$scope", "$http", "$filt
 			   scope.generalError = true;
 	});
 
+	ServerService.getAllOrdersCountByStatus(2).then(function (data) {
+                        if (data) {
+                           scope.activeOrders = data;
+                        } else {
+                           scope.generalError = true;
+                        }
+	}, function(reason) {
+			   scope.generalError = true;
+	});
+
 	ServerService.getOperators().then(function (data) {
                         if (data) {
                            scope.operators = data;

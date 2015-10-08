@@ -100,9 +100,11 @@
                                                     <td>{{order.order_id}}</td>
                                                     <td><a href="#/orderDetailed/{{order.order_id}}/{{selected.id}}">{{order.name}}</a></td>
                                                     <td>
-                                                        <span ng-if="order.status==1" class="glyphicon glyphicon-ok"> Active</span>
+                                                        <span ng-if="order.status==2" class="glyphicon glyphicon-ok"> Active</span>
+
+                                                        <span ng-if="order.status==1" class="glyphicon glyphicon-time"> Pending</span>
                                                         
-                                                        <span ng-if="order.status==0" class="glyphicon glyphicon-remove"></span> Not active</td>
+                                                        <span ng-if="order.status==0" class="glyphicon glyphicon-remove"> Not active</span> </td>
                                                 </tr>
                                             </tbody>
                                         </table>

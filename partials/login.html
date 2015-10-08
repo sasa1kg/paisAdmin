@@ -1,17 +1,15 @@
 <div class="container">
 
-<div class="col-lg-3 pulltop loginform">
-        <form class="insideloginform">
+<div class="col-lg-4 pulltop loginform">
+        <div class="insideloginform">
             <div class="form-group">
-                <input type="email" class="form-control input-lg" id="inputEmail" placeholder="Korisničko ime">
+                <input type="text" class="form-control input-lg"  placeholder="Username" ng-model="username">
             </div>
             <div class="form-group">
-                <input type="password" class="form-control input-lg" id="inputPassword" placeholder="Lozinka">
+                <input type="password" class="form-control input-lg" placeholder="Password" ng-model="password">
             </div>
             <div>
-                <a class="btn btn-default btn-lg submitbutton pull-right" role="button" href="#/mainPage">
-
-                    Ulaz</a>
+                <a class="btn btn-default btn-lg submitbutton pull-right" role="button" ng-click="login()">Log in</a>
               
                   <!--<oauth
                         site="http://oauth-ng-server.herokuapp.com."
@@ -21,6 +19,9 @@
                         scope="public">
                 </oauth>  -->
             </div>
-        </form>
+        </div>
+        <div class="alert alert-danger pulltop30" ng-show="loginFailed">
+            <strong>LOGIN</strong> Login failed. Check credentials and try again.
+        </div>
 <div>
 </div>

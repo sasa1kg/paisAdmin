@@ -1,25 +1,62 @@
 var ServerService = angular.module('ServerService', [])
-	.service('ServerService', ["$q", "$http", "$location",
-    function (q, http, location) {
+	.service('ServerService', ["$q", "$http", "$location", 'localStorageService',
+    function (q, http, location, localStorageService) {
 
 	var serverurl = 'http://195.220.224.164/';
   	var user = "";
+
+  var putUserInStorage = function (user) {
+    localStorageService.set("adminObject", user);
+  }
+
+  this.clearUserInStorage = function () {
+        var keys = localStorageService.keys();
+        for (var i = keys.length - 1; i >= 0; i--) {
+              localStorageService.remove(keys[i]);
+        };
+  }
+
+  var getUserInStorage = function () {
+    var keys = localStorageService.keys();
+    if (keys.length == 0) {
+      return null;
+    }
+    for (var i = keys.length - 1; i >= 0; i--) {
+      if (keys[i] == "adminObject") {
+        var userObj = localStorageService.get(keys[i]);
+        return userObj;
+      }
+    };
+    return null;
+  }
+
+  this.getUserInStorage = function () {
+    var keys = localStorageService.keys();
+    if (keys.length == 0) {
+      return null;
+    }
+    for (var i = keys.length - 1; i >= 0; i--) {
+      if (keys[i] == "adminObject") {
+        var userObj = localStorageService.get(keys[i]);
+        return userObj;
+      }
+    };
+    return null;
+  }
 
     /*-------------------------- LOCAL STORAGE ----------------------------*/
 
     /*-------------------------- USER OPERATIONS----------------------------*/
 
-  this.login = function (username, password) {
+  this.login = function (object) {
       var deffered = q.defer();
-      http.get(serverurl + "pais/clients/" + username).
+      http.post(serverurl + "pais/administrators/login", object).
               success(function(data, status) {
                 if (status == 200) {
-                    if (data.id == username && data.password == password) {
+
                       putUserInStorage(data);
                       deffered.resolve(true);
-                    } else {
-                      deffered.reject("Error");
-                    }
+                    
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");
@@ -33,8 +70,16 @@ var ServerService = angular.module('ServerService', [])
 
       return deffered.promise;
   }
+  this.logout = function (object) {
+      this.clearUserInStorage();
+      location.path("/login");
+  }
 
   this.updateClient = function (user) {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
     var deffered = q.defer();
        http.put(serverurl + "pais/clients", user).
               success(function(data, status) {
@@ -56,6 +101,10 @@ var ServerService = angular.module('ServerService', [])
 
 
 	this.getClient = function (id) {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
 		 var deffered = q.defer();
     	 http.get(serverurl + "pais/clients/" + id).
               success(function(data, status) {
@@ -78,7 +127,10 @@ var ServerService = angular.module('ServerService', [])
 	}
 
 	this.getClients = function () {
-   
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }   
 		 var deffered = q.defer();
     	 http.get(serverurl + "pais/clients").
               success(function(data, status) {
@@ -102,6 +154,10 @@ var ServerService = angular.module('ServerService', [])
 
 
 	this.registerUser = function (user) {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }    
  		var deffered = q.defer();
     	console.log("registerUser " + user);
     	 http.post(serverurl + "pais/clients", user).
@@ -124,6 +180,10 @@ var ServerService = angular.module('ServerService', [])
 	}
 
   this.getAccountTypes = function () {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
       var deffered = q.defer();
       http.get(serverurl + "pais/clientTypes").
               success(function(data, status) {
@@ -145,6 +205,10 @@ var ServerService = angular.module('ServerService', [])
   }
 
   this.getCities = function () {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }    
       var deffered = q.defer();
       http.get(serverurl + "pais/cities").
               success(function(data, status) {
@@ -166,6 +230,10 @@ var ServerService = angular.module('ServerService', [])
   }
 
   this.addNewCity = function (city) {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }    
       var deffered = q.defer();
       http.post(serverurl + "pais/cities", city).
               success(function(data, status) {
@@ -188,6 +256,10 @@ var ServerService = angular.module('ServerService', [])
 
 
   this.deleteCity = function (id) {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
       var deffered = q.defer();
       http.delete(serverurl + "pais/cities/" + id).
               success(function(data, status) {
@@ -209,6 +281,10 @@ var ServerService = angular.module('ServerService', [])
   }
 
   this.getCountries = function () {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
       var deffered = q.defer();
       http.get(serverurl + "pais/countries").
               success(function(data, status) {
@@ -230,6 +306,10 @@ var ServerService = angular.module('ServerService', [])
   }
 
   this.addNewCountry = function (country) {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
       var deffered = q.defer();
       http.post(serverurl + "pais/countries", country).
               success(function(data, status) {
@@ -251,6 +331,10 @@ var ServerService = angular.module('ServerService', [])
   }
 
     this.deleteCountry = function (id) {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
       var deffered = q.defer();
       http.delete(serverurl + "pais/countries/" + id).
               success(function(data, status) {
@@ -271,7 +355,11 @@ var ServerService = angular.module('ServerService', [])
        return deffered.promise;
   }
 
-    this.updateCountry = function (country) {
+  this.updateCountry = function (country) {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
       var deffered = q.defer();
       http.put(serverurl + "pais/countries", country).
               success(function(data, status) {
@@ -298,6 +386,10 @@ var ServerService = angular.module('ServerService', [])
   /*---------------------- SENSOR OPERATIONS --------------------------------*/
 
   this.getSensorTypes = function () {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }    
       var deffered = q.defer();
       http.get(serverurl + "pais/sensorTypesDetailed").
               success(function(data, status) {
@@ -317,6 +409,10 @@ var ServerService = angular.module('ServerService', [])
   }
 
   this.getSensorType = function (id) {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
       var deffered = q.defer();
       http.get(serverurl + "pais/sensorTypes/" + id).
               success(function(data, status) {
@@ -336,6 +432,10 @@ var ServerService = angular.module('ServerService', [])
   } 
 
     this.addSensorType = function (sensor) {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
       var deffered = q.defer();
       http.post(serverurl + "pais/sensorTypes", sensor).
               success(function(data, status) {
@@ -355,6 +455,10 @@ var ServerService = angular.module('ServerService', [])
   } 
 
   this.updateSensorType = function (sensor) {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
       var deffered = q.defer();
       http.put(serverurl + "pais/sensorTypes", sensor).
               success(function(data, status) {
@@ -374,6 +478,10 @@ var ServerService = angular.module('ServerService', [])
   } 
 
     this.deleteSensorType = function (id) {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
       var deffered = q.defer();
       http.delete(serverurl + "pais/sensorTypes/" + id).
               success(function(data, status) {
@@ -393,6 +501,10 @@ var ServerService = angular.module('ServerService', [])
   } 
 
   this.getSensorUOM = function (id) {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
       var deffered = q.defer();
       http.get(serverurl + "pais/uoms/" + id).
               success(function(data, status) {
@@ -412,6 +524,10 @@ var ServerService = angular.module('ServerService', [])
   } 
 
     this.getUOMs = function () {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
       var deffered = q.defer();
       http.get(serverurl + "pais/uoms").
               success(function(data, status) {
@@ -431,6 +547,10 @@ var ServerService = angular.module('ServerService', [])
   } 
 
   this.addNewUOM = function (uom) {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
       var deffered = q.defer();
       http.post(serverurl + "pais/uoms", uom).
               success(function(data, status) {
@@ -450,6 +570,10 @@ var ServerService = angular.module('ServerService', [])
   }
 
   this.updateUOM = function (uom) {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
       var deffered = q.defer();
       http.put(serverurl + "pais/uoms", uom).
               success(function(data, status) {
@@ -469,6 +593,10 @@ var ServerService = angular.module('ServerService', [])
   } 
 
   this.deleteUOM = function (id) {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
       var deffered = q.defer();
       http.delete(serverurl + "pais/uoms/" + id).
               success(function(data, status) {
@@ -490,6 +618,10 @@ var ServerService = angular.module('ServerService', [])
   
 
   this.getSensorTypeUOMs = function (sensorTypesId) {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
       var deffered = q.defer();
       http.get(serverurl + "pais/sensorTypes/" + sensorTypesId + "/uoms").
               success(function(data, status) {
@@ -509,6 +641,10 @@ var ServerService = angular.module('ServerService', [])
   } 
 
     this.getSensorResults = function (orderId, sensorId, clientId, resultObject) {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
       var deffered = q.defer();
       http.post(serverurl + "pais/clients/" + clientId + "/orders/"+ orderId +"/results/sensors/" + sensorId, resultObject).
               success(function(data, status) {
@@ -535,6 +671,10 @@ var ServerService = angular.module('ServerService', [])
   /*---------------------- ORDER OPERATIONS --------------------------------*/
 
   this.clientOrder = function (clientId, orderId) {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
       var userLS = getUserInStorage();
       if (userLS == null) {
         location.path("/login");
@@ -556,6 +696,10 @@ var ServerService = angular.module('ServerService', [])
   }
 
   this.clientOrders = function (clientId) {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
       var deffered = q.defer();
       http.get(serverurl + "pais/clients/" + clientId + "/orders").
               success(function(data, status) {
@@ -570,9 +714,35 @@ var ServerService = angular.module('ServerService', [])
               });
        return deffered.promise;
   }
+
+  this.assignOrder = function (clientId, order_id, orderObject) {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
+      var deffered = q.defer();
+      http.post(serverurl + "pais/clients/"+ clientId +"/orders/"+ order_id +"/assingOperator", orderObject).
+              success(function(data, status) {
+                if (status == 200) {
+                    deffered.resolve(data);
+                } else {
+                   deffered.reject("Error");
+                }
+              }).
+              error(function(data, status) {
+                   deffered.reject("Error");
+              });
+       return deffered.promise;
+  }
+
+  
  
 
   this.clientOrderDetailed = function (clientId, orderId) {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
       var deffered = q.defer();
       http.get(serverurl + "pais/clients/" + clientId + "/orders/" + orderId + "/details").
               success(function(data, status) {
@@ -592,6 +762,10 @@ var ServerService = angular.module('ServerService', [])
   }
 
     this.getAllOrders = function () {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
       var deffered = q.defer();
       http.get(serverurl + "pais/orders").
               success(function(data, status) {
@@ -611,6 +785,10 @@ var ServerService = angular.module('ServerService', [])
   }
 
   this.getAllOrdersCount = function (filter) {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
       var deffered = q.defer();
       http.get(serverurl + "pais/orders/count?status=" + filter).
               success(function(data, status) {
@@ -633,6 +811,10 @@ var ServerService = angular.module('ServerService', [])
   
 
   this.getAllOrdersByFilter = function (filter) {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
       var deffered = q.defer();
       http.get(serverurl + "pais/orders?status=" + filter).
               success(function(data, status) {
@@ -652,6 +834,10 @@ var ServerService = angular.module('ServerService', [])
   }
 
   this.getAllOrdersByStatus = function (status) {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
       var deffered = q.defer();
       http.get(serverurl + "pais/orders?status=" + status).
               success(function(data, status) {
@@ -671,6 +857,10 @@ var ServerService = angular.module('ServerService', [])
   }
 
   this.getAllOrdersCountByStatus = function (status) {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
       var deffered = q.defer();
       http.get(serverurl + "pais/orders/count?status=" + status).
               success(function(data, status) {
@@ -692,6 +882,10 @@ var ServerService = angular.module('ServerService', [])
 
 
   this.clientOrderSensors = function (clientId, orderId, sensorId) {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
       var userLS = getUserInStorage();
       if (userLS == null) {
         location.path("/login");
@@ -716,6 +910,10 @@ var ServerService = angular.module('ServerService', [])
 
 
   this.evaluateOrder = function (clientId, order) {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
     var userLS = getUserInStorage();
       if (userLS == null) {
         location.path("/login");
@@ -767,6 +965,10 @@ var ServerService = angular.module('ServerService', [])
   /*-------------------------------------------------------------------------*/
   /*---------------------- DRON OPERATIONS --------------------------------*/
   this.getFrequencies = function () {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
       var deffered = q.defer();
       http.get(serverurl + "pais/frequencies").
               success(function(data, status) {
@@ -786,6 +988,10 @@ var ServerService = angular.module('ServerService', [])
   } 
 
   this.updateFrequency = function (freq) {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
       var deffered = q.defer();
       http.put(serverurl + "pais/frequencies", freq).
               success(function(data, status) {
@@ -805,6 +1011,10 @@ var ServerService = angular.module('ServerService', [])
   } 
 
     this.deleteFrequency = function (id) {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
       var deffered = q.defer();
       http.delete(serverurl + "pais/frequencies/" + id).
               success(function(data, status) {
@@ -824,7 +1034,11 @@ var ServerService = angular.module('ServerService', [])
   } 
 
 
-    this.addNewFreq = function (freq) {
+  this.addNewFreq = function (freq) {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
       var deffered = q.defer();
       http.post(serverurl + "pais/frequencies", freq).
               success(function(data, status) {
@@ -848,6 +1062,10 @@ var ServerService = angular.module('ServerService', [])
   
 
   this.getImageTypes = function () {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
       var deffered = q.defer();
       http.get(serverurl + "pais/imageTypes").
               success(function(data, status) {
@@ -867,6 +1085,10 @@ var ServerService = angular.module('ServerService', [])
   } 
 
     this.updateImageType = function (imageType) {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
       var deffered = q.defer();
       http.put(serverurl + "pais/imageTypes", imageType).
               success(function(data, status) {
@@ -886,6 +1108,10 @@ var ServerService = angular.module('ServerService', [])
   } 
 
   this.addImageType = function (imageType) {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
       var deffered = q.defer();
       http.post(serverurl + "pais/imageTypes", imageType).
               success(function(data, status) {
@@ -905,6 +1131,10 @@ var ServerService = angular.module('ServerService', [])
   } 
 
   this.deleteImageType = function (id) {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
       var deffered = q.defer();
       http.delete(serverurl + "pais/imageTypes/" + id).
               success(function(data, status) {
@@ -927,6 +1157,10 @@ var ServerService = angular.module('ServerService', [])
   
 
   this.getOperatorCompanies = function () {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
       var deffered = q.defer();
       http.get(serverurl + "pais/operators/companies").
               success(function(data, status) {
@@ -947,6 +1181,10 @@ var ServerService = angular.module('ServerService', [])
 
 
     this.addOperatorCompany = function (company) {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
       var deffered = q.defer();
       http.post(serverurl + "pais/operators/companies", company).
               success(function(data, status) {
@@ -967,6 +1205,10 @@ var ServerService = angular.module('ServerService', [])
 
 
     this.deleteOperatorCompany = function (id) {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
       var deffered = q.defer();
       http.delete(serverurl + "pais/operators/companies/" + id).
               success(function(data, status) {
@@ -987,6 +1229,10 @@ var ServerService = angular.module('ServerService', [])
 
 
   this.getOperators = function () {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
       var deffered = q.defer();
       http.get(serverurl + "pais/operators").
               success(function(data, status) {
@@ -1006,6 +1252,10 @@ var ServerService = angular.module('ServerService', [])
   } 
 
     this.getOperatorsFromCompany = function (company_id) {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
       var deffered = q.defer();
       http.get(serverurl + "pais/operators?company_id=" + company_id).
               success(function(data, status) {
@@ -1026,6 +1276,10 @@ var ServerService = angular.module('ServerService', [])
 
 
     this.getOperator = function (id) {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
       var deffered = q.defer();
       http.get(serverurl + "pais/operators/" + id).
               success(function(data, status) {
@@ -1046,6 +1300,10 @@ var ServerService = angular.module('ServerService', [])
 
 
     this.addOperator = function (operator) {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
       var deffered = q.defer();
       http.post(serverurl + "pais/operators", operator).
               success(function(data, status) {
@@ -1066,6 +1324,10 @@ var ServerService = angular.module('ServerService', [])
 
 
   this.deleteOperator = function (id) {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
       var deffered = q.defer();
       http.delete(serverurl + "pais/operators/" + id).
               success(function(data, status) {
@@ -1086,6 +1348,10 @@ var ServerService = angular.module('ServerService', [])
 
 
     this.updateOperator = function (operator) {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
       var deffered = q.defer();
       http.put(serverurl + "pais/operators", operator).
               success(function(data, status) {
@@ -1109,6 +1375,10 @@ var ServerService = angular.module('ServerService', [])
 
 
   this.getCurrencies = function () {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
       var deffered = q.defer();
       http.get(serverurl + "pais/currencies").
               success(function(data, status) {
@@ -1128,6 +1398,10 @@ var ServerService = angular.module('ServerService', [])
   } 
 
     this.addNewCurrency = function (curr) {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
       var deffered = q.defer();
       http.post(serverurl + "pais/currencies", curr).
               success(function(data, status) {
@@ -1147,6 +1421,10 @@ var ServerService = angular.module('ServerService', [])
   } 
 
     this.removeCurrency = function (id) {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
       var deffered = q.defer();
       http.delete(serverurl + "pais/currencies/" + id).
               success(function(data, status) {
@@ -1167,6 +1445,10 @@ var ServerService = angular.module('ServerService', [])
 
 
     this.getAdministrators = function () {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
       var deffered = q.defer();
       http.get(serverurl + "pais/administrators").
               success(function(data, status) {

@@ -20,8 +20,8 @@
 
 
                 <div class="row">
-                    <div class="col-lg-3 col-md-6">
-                        <div class="panel panel-yellow">
+                    <div class="col-lg-4 col-md-4">
+                        <div class="panel panel-red">
                             <div class="panel-heading">
                                 <div class="row">
                                     <div class="col-xs-3">
@@ -42,8 +42,8 @@
                             </a>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-md-6">
-                        <div class="panel panel-green">
+                    <div class="col-lg-4 col-md-4">
+                        <div class="panel panel-yellow">
                             <div class="panel-heading">
                                 <div class="row">
                                     <div class="col-xs-3">
@@ -51,6 +51,28 @@
                                     </div>
                                     <div class="col-xs-9 text-right">
                                         <div class="huge">{{orders.count}}</div>
+                                        <div>Pending orders</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="#/orders">
+                                <div class="panel-footer">
+                                    <span class="pull-left">Orders</span>
+                                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                    <div class="clearfix"></div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4">
+                        <div class="panel panel-green">
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <div class="col-xs-3">
+                                        <i class="fa fa-shopping-cart fa-5x"></i>
+                                    </div>
+                                    <div class="col-xs-9 text-right">
+                                        <div class="huge">{{activeOrders.count}}</div>
                                         <div>Active orders</div>
                                     </div>
                                 </div>
@@ -64,7 +86,7 @@
                             </a>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-md-6">
+                    <div class="col-lg-4 col-md-4">
                         <div class="panel panel-primary">
                             <div class="panel-heading">
                                 <div class="row">
@@ -86,7 +108,7 @@
                             </a>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-md-6">
+                    <div class="col-lg-4 col-md-4">
                         <div class="panel panel-red">
                             <div class="panel-heading">
                                 <div class="row">
@@ -133,14 +155,14 @@
                     <div class="col-lg-6">
                         <div class="panel panel-default">
                             <div class="panel-heading">
-                                <h3 class="panel-title"><i class="fa fa-money fa-fw"></i> Transactions</h3>
+                                <h3 class="panel-title"><i class="fa fa-money fa-fw"></i> Reports</h3>
                             </div>
                             <div class="panel-body">
                                 <div class="table-responsive">
                                     
                                 </div>
                                 <div class="text-right">
-                                    <a>All transactions <i class="fa fa-arrow-circle-right"></i></a>
+                                    <a href="#/reports">All reports <i class="fa fa-arrow-circle-right"></i></a>
                                 </div>
                             </div>
                         </div>

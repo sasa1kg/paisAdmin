@@ -40,6 +40,15 @@
                                                 {{selectedDetailed.description}}
                                             </div>
                                         </div>
+                                        <div class="panel panel-default panelSmallBorderTop">
+                                            <div class="panel-heading panelSmallTop">
+                                                <p>Service time<p>
+                                            </div>
+                                            <div class="panel-body">
+                                                <p>From: {{selectedDetailed.start_date}}<p>
+                                                <p>To: {{selectedDetailed.end_date}}<p>
+                                            </div>
+                                        </div>
                                         <div class="panel panel-default">
                                             <div class="panel-heading">
                                                 <h5>Ordered By: {{selectedDetailedUser.first_name}} {{selectedDetailedUser.last_name}}<h5>
@@ -112,17 +121,18 @@
                                             <h4>Status<h4>
                                         </div>
                                         <div class="panel-body">
-                                            <p><span class="badge" ng-show="selectedDetailed.status == 0"> Inactive</span></p>
-                                            <p><span class="badge activeBadge" ng-show="selectedDetailed.status == 1"> Active</span></p>
-                                            <p><span class="badge" ng-show="selectedDetailed.status == 2"> Status 2</span></p>
-                                            <p><span class="badge" ng-show="selectedDetailed.status == 3"> Status 3</span></p>
+                                            <p><span class="badge notActiveBadge" ng-show="selectedDetailed.status == 0"> Inactive</span></p>
+                                            <p><span class="badge" ng-show="selectedDetailed.status == 1"> Pending (Invoice sent)</span></p>
+                                            <p><span class="badge activeBadge" ng-show="selectedDetailed.status == 2"> Active</span></p>
+                                            <a class="cursorchg" ng-show="selectedDetailed.status == 1" ng-click="showInvoice()"><span class="glyphicon glyphicon-usd"></span> Show sent invoice</a>
                                         </div>
                             </div>
                             <div class="panel panel-default panelSmallBorderTop">
                                     <div class="panel-heading panelSmallTop">
-                                        <h4>Actions<h4>
+                                        <h4 ng-show="selectedDetailed.status != 2">Actions<h4>
+                                        <h4 ng-show="selectedDetailed.status == 2">Payment and operator<h4>
                                     </div>
-                                    <div class="panel-body">
+                                    <div class="panel-body" ng-show="selectedDetailed.status == 0">
                                         <p>Send invoice to user</p>
                                         <button class="btn btn-primary" ngf-select="uploadFiles($files)">Select Invoice</button>
                                         <table class="table table-striped table-hover">
@@ -141,17 +151,65 @@
                                         </tr>
                                         </tbody>
                                         </table>
-                                        <hr>
-                                        <p ng-show="selectedDetailed.status == 2">Assign order to operator</p>
-                                        <select ng-show="selectedDetailed.status == 2" class="form-control" ng-model="selectedOperator">
+                                     
+                                       
+                                    </div>
+                                    <div class="panel-body" ng-show="selectedDetailed.status == 1">
+                                        <p>Payment amount</p>
+                                        <div class="form-group row pulltop">
+                                            <div class="col-md-8">
+                                                <input class="form-control pulltop text-right" ng-model="assignObject.order_value">
+                                            </div>
+                                            <div class="col-md-4">
+                                                <select class="form-control" ng-model="assignObject.currency_id">
+                                                     <option
+                                                        ng-repeat="currency in currencies"
+                                                        value="{{currency.id}}">
+                                                        [{{currency.id}}] {{currency.name}}
+                                                     </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <p>Payment date</p>
+                                        <input class="form-control" type="date" ng-model="assignObject.order_payment_date">
+                                        <p class="pulltop10">Assign order to operator company</p>
+                                        <select class="form-control" ng-model="assignObject.operator_company_id">
                                              <option
-                                                ng-repeat="operator in operators"
-                                                value="{{operator.id}}">
-                                                {{operator.first_name}} {{operator.last_name}} [{{operator.company_name}}]
+                                                ng-repeat="company in operatorCompanies"
+                                                value="{{company.id}}">
+                                                {{company.name}}
                                              </option>
                                         </select>
-                                        <button ng-show="selectedDetailed.status == 2" class="btn btn-primary pulltop_btn">Assign</button>
-                                       
+                                        <button class="btn btn-primary pulltop_btn" ng-click="assignOrder()">Assign</button>
+                                    </div>
+                                    <div class="panel-body" ng-show="selectedDetailed.status == 2">
+                                        <div class="form-group row pulltop">
+                                            <div class="col-md-4 text-center vcenter">
+                                                <p>Order assigned to</p>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <input class="form-control pulltop" ng-disabled="true" ng-model="selectedDetailed.operator_company_name">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row pulltop">
+                                            <div class="col-md-4 text-center vcenter">
+                                                <p>Order paid</p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <input class="form-control pulltop" ng-disabled="true" ng-model="selectedDetailed.order_value">
+                                            </div>
+                                            <div class="col-md-2">
+                                                <input class="form-control pulltop" ng-disabled="true" ng-model="selectedDetailed.currency_id">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row pulltop">
+                                            <div class="col-md-4 text-center vcenter">
+                                                <p>Payment date</p>
+                                            </div>
+                                             <div class="col-md-8">
+                                                <input class="form-control pulltop" ng-disabled="true" ng-model="selectedDetailed.order_payment_date">
+                                             </div>
+                                        </div>
                                     </div>
                             </div>
                             <div class="panel panel-default panelSmallBorderTop">
@@ -172,7 +230,13 @@
                                                         <tr ng-repeat="sen in selectedDetailed.sensors">
                                                             <td>{{getSensorTypeName(sen.type_id)}}</td>
                                                             <td>{{sen.description}}</td>
-                                                            <td><a class="cursorchg" href="#/sensorReadings/{{selectedDetailedUser.id}}/{{selectedDetailed.order_id}}/{{sen.sensor_id}}/"><span class="glyphicon glyphicon-equalizer"></span> Go to results</a></td>
+                                                            <td>
+                                                                <a class="cursorchg" href="#/sensorReadings/{{selectedDetailedUser.id}}/{{selectedDetailed.order_id}}/{{sen.sensor_id}}/" ng-show="sen.active==1"><span class="glyphicon glyphicon-equalizer"></span> Go to results</a>
+
+                                                                <a ng-show="sen.active==0"><span class="glyphicon glyphicon-remove"></span> Not active</a>
+                                                            </td>
+
+                                                            
                                                         </tr>
                                                     </tbody>
                                             </table>

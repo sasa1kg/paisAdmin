@@ -9,8 +9,10 @@ angular.module('adminApp').controller("ordersCtrl", ["$scope", "$http", "$filter
 	scope.orders = [];
 	scope.noOrders = false;
 
+	scope.loadingOrders = false;
+
 	scope.filter = -1;
-	scope.pages = 5;
+	scope.pages = 1;
 
 	scope.setPage = function (page) {
 		scope.currentPage = page;
@@ -18,7 +20,9 @@ angular.module('adminApp').controller("ordersCtrl", ["$scope", "$http", "$filter
 	}
 
 
-	scope.getCount = function () {
+	scope.getCount = function (id) {
+		scope.loadingOrders = true;
+		scope.filter = id;
 		ServerService.getAllOrdersCount(scope.filter).then(function (data) {
                         if (data) {
                            scope.ordersCount = data.count;
@@ -28,6 +32,7 @@ angular.module('adminApp').controller("ordersCtrl", ["$scope", "$http", "$filter
                            		scope.pages = scope.ordersCount / 10 + 1; 
                            }
                            scope.currentPage = 1;
+                           scope.refreshList(scope.filter);
                         } else {
                             alert("Error occured.");
                             alert(scope.pages);
@@ -39,22 +44,26 @@ angular.module('adminApp').controller("ordersCtrl", ["$scope", "$http", "$filter
 			    scope.currentPage = 1;
 			});
 	}
-	scope.getCount();
+	scope.getCount(scope.filter);
 
 	scope.refreshList = function (filter_id) {
-		if (scope.filter != filter_id) {
-			scope.getOrders = ServerService.getAllOrders().then(function (data) {
+			scope.getOrders = ServerService.getAllOrdersByFilter(filter_id).then(function (data) {
                         if (data) {
-                        	scope.filter = filter_id;
+                           scope.filter = filter_id;
                            scope.orders = data;
-                           scope.select(data[0].order_id, data[0].client_id);
+                           scope.loadingOrders = false;
+                           scope.getSensorTypes();
+                           scope.getUOMs();
+                           if (data != undefined && data.length > 0) {
+                           		scope.select(data[0].order_id, data[0].client_id);
+                       		}
                         } else {
                             alert("Error occured.");
                         }
 			}, function(reason) {
 			    alert("Error occured.");
 			});
-		}
+		
 	}
 
 
@@ -96,42 +105,49 @@ angular.module('adminApp').controller("ordersCtrl", ["$scope", "$http", "$filter
 		});
 	} 
 
-	scope.getOrders = ServerService.getAllOrders().then(function (data) {
-                        if (data) {
-                           scope.orders = data;
-                           if (data != undefined && data.length > 0) {
-                           		scope.select(data[0].order_id, data[0].client_id);
-                       		} else {
-                       			scope.noOrders = true;
-                       		}
-                        } else {
-                            alert("Error occured.");
-                        }
-	}, function(reason) {
-	    alert("Error occured.");
-	});
+	// scope.getOrders = ServerService.getAllOrders().then(function (data) {
+ //                        if (data) {
+ //                           scope.orders = data;
+ //                           if (data != undefined && data.length > 0) {
+ //                           		scope.select(data[0].order_id, data[0].client_id);
+ //                       		} else {
+ //                       			scope.noOrders = true;
+ //                       		}
+ //                        } else {
+ //                            alert("Error occured.");
+ //                        }
+	// }, function(reason) {
+	//     alert("Error occured.");
+	// });
 
-	scope.getSensorTypesDetailed = ServerService.getSensorTypes().then(function (data) {
+	scope.getSensorTypes = function () {
+		scope.getSensorTypesDetailed = ServerService.getSensorTypes().then(function (data) {
                         if (data) {
                            scope.sensorTypes = data;
                         } else {
                             alert("Error occured.");
                         }
-	}, function(reason) {
-	    alert("Error occured.");
-	});
+		}, function(reason) {
+		    alert("Error occured.");
+		});
+	}
 
-	scope.getUOMS = ServerService.getUOMs().then(function (data) {
+	scope.getUOMs = function () { 
+		ServerService.getUOMs().then(function (data) {
                         if (data) {
                            scope.uoms = data;
                         } else {
                             alert("Error occured.");
                         }
-	}, function(reason) {
-	    alert("Error occured.");
-	});
+		}, function(reason) {
+		    alert("Error occured.");
+		});
+	}
 
 	scope.getSensorTypeName = function (type_id) {
+		if (scope.getSensorTypes == undefined) {
+			return "N/A";
+		}
 		for (var i = scope.sensorTypes.length - 1; i >= 0; i--) {
 			if (scope.sensorTypes[i].id == type_id) {
 				return scope.sensorTypes[i].name;

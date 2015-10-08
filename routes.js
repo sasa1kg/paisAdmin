@@ -96,6 +96,12 @@ angular.module("adminApp").config(['$routeProvider', function(routeProvider) {
 		resolve: {
 		}
 	})
+	.when("/reports", {
+		templateUrl: "partials/reports.html",
+		controller: "reportsCtrl",
+		resolve: {
+		}
+	})
 	.otherwise({redirectTo: '/login'});
 
 }]);

@@ -11,6 +11,30 @@ angular.module('adminApp').controller("orderDetailedCtrl", ["$scope", "$http", "
 	scope.param_order_id = rootParams.id;
 	scope.param_user_id = rootParams.user_id;
 
+
+	scope.assignObject = {
+	    "operator_company_id": "",
+	    "currency_id": "",
+	    "order_value": "",
+	    "order_payment_date": ""
+	}
+
+	scope.getCurrencies = function () {
+			ServerService.getCurrencies().then(function (data) {
+                        if (data) {
+                        	scope.currencies = data;
+                        	if (data.length > 0) {
+                        		scope.assignObject.currency_id = data[0].id;
+                        	}
+                        } else {
+                        	 alert("Error in communication occured.");
+                        }
+			}, function(reason) {
+			   alert("Error in communication occured.");
+			});
+	}
+	scope.getCurrencies();
+
 	scope.getOrderDetails = function () {
 		ServerService.clientOrderDetailed(scope.param_user_id, scope.param_order_id).then(function (data) {
                         if (data) {
@@ -73,11 +97,13 @@ angular.module('adminApp').controller("orderDetailedCtrl", ["$scope", "$http", "
 	}
 
 
-	scope.getOperators = function () {
-		ServerService.getOperators().then(function (data) {
+	scope.getOperatorCompanies = function () {
+		ServerService.getOperatorCompanies().then(function (data) {
                         if (data) {
-                        	scope.operators = data;
-                        	scope.selectedOperator = data[0].id;
+                        	scope.operatorCompanies = data;
+                        	if (data.length > 0) {
+                        		scope.assignObject.operator_company_id = data[0].id;
+                        	}
                         }
 		}, function(reason) {
 			    alert("Error occured.");
@@ -85,7 +111,7 @@ angular.module('adminApp').controller("orderDetailedCtrl", ["$scope", "$http", "
 	}
 
 
-	scope.getOperators();
+	scope.getOperatorCompanies();
 
 	scope.uploadFiles = function(files) {
         scope.files = files;
@@ -99,7 +125,7 @@ angular.module('adminApp').controller("orderDetailedCtrl", ["$scope", "$http", "
                 file.upload.then(function (response) {
                   $timeout(function () {
                     file.result = response.data;
-                    alert("Finished");
+                    scope.getOrderDetails();
                   });
                 }, function (response) {
                   if (response.status > 0)
@@ -112,6 +138,34 @@ angular.module('adminApp').controller("orderDetailedCtrl", ["$scope", "$http", "
                 });
             }   
         });
+    }
+
+
+    scope.assignOrder = function () {
+    	if (scope.assignObject.order_value.length < 1) {
+    		alert("Payment amount is missing.");
+    		return;
+    	}
+    	if (scope.assignObject.order_payment_date.length < 1) {
+    		alert("Payment date is missing.");
+    		return;
+    	}
+    	ServerService.assignOrder(scope.param_user_id, scope.param_order_id, scope.assignObject).then(function (data) {
+                        if (data) {
+                        	scope.getOrderDetails();
+                        }
+		}, function(reason) {
+			    alert("Error occured.");
+		});
+    }
+
+    scope.showInvoice = function () {
+    	http.get('http://195.220.224.164/pais/clients/'+ scope.selectedDetailed.client_id + '/orders/'+ scope.selectedDetailed.order_id + '/getInvoice', {responseType: 'arraybuffer'})
+       .success(function (data) {
+           var file = new Blob([data], {type: 'application/pdf'});
+           var fileURL = URL.createObjectURL(file);
+           window.open(fileURL);
+    });
     }
 
 }]);

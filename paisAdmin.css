@@ -13,6 +13,10 @@ body{
 	margin-top: 10px;
 }
 
+.pulltop30 {
+	margin-top: 30px;
+}
+
 .fullwidth {
 	width: 100%;
 }
@@ -21,6 +25,7 @@ body{
 	height:85%;
 	padding: 10px;
 }
+
 
 .sensorholder {
 	background-color: rgba(231, 231, 231, 0.9);
@@ -39,7 +44,7 @@ body{
 .loginform {
 	opacity: 0.9;
 	filter:alpha(opacity=90);
-	background-color: green !important;
+	background-color: #222 !important;
 	border-radius: 10px;
 }
 
@@ -130,6 +135,14 @@ body{
 .pulltop {
 	margin-top: 3px;
 	margin-bottom: 3px;
+}
+.pulltop10 {
+	margin-top: 10px;
+}
+.vcenter {
+	display: inline-block;
+    vertical-align: middle;
+    margin-top: 10px;
 }
 .saveButton {
 	margin-bottom: 10px !important;

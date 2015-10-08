@@ -1,4 +1,5 @@
-var adminApp = angular.module("adminApp", ['ngRoute', 'ngCookies', 'ServerService', 'ui.bootstrap', 'ngFileUpload']);
+var adminApp = angular.module("adminApp", ['ngRoute', 'ngCookies', , 'LocalStorageModule', 'ServerService', 'ui.bootstrap', 'ngFileUpload']);
+
 
 adminApp.filter('percentage', ['$filter', function ($filter) {
   return function (input, decimals) {
