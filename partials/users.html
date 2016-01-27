@@ -1,3 +1,4 @@
+
  <div id="wrapper">
 
         <div ng-include="'partials/navigation.html'">
@@ -19,26 +20,32 @@
 
                 <div class="row">
                     <div class="col-lg-12">
-                        <h2>Clients <a href="#/newUser" class="btn btn-info pull-right" role="button">New client</a></h2>
+                        <h2>Clients <a href="#/newUser" class="btn btn-info pull-right" role="button"><span class="glyphicon glyphicon-plus"></span> New client</a></h2>
                             <div class="alert alert-success" ng-show="!save && save_success">
                                 <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                                <strong>{{selected.username}}</strong> Changes saved
+                                <strong>{{selected.email}}</strong> Changes saved
                             </div>
                         <div class="table-responsive">
-                            <div class="col-lg-6">
-                            <table class="table table-bordered table-hover">
+                        <div class="col-lg-6">
+                            <button class="btn btn-link pull-right" onClick ="$('#table3').tableExport({type:'pdf',escape:'false'});">
+                                <span class="glyphicon glyphicon-export"></span> Export to PDF
+                            </button>
+                            <button class="btn btn-link pull-right" onClick ="$('#table3').tableExport({type:'excel',escape:'false'});">
+                                <span class="glyphicon glyphicon-share"></span> Export to Excel
+                            </button>
+                            <table class="table table-bordered table-hover" id="table3">
                                 <thead>
                                     <tr>
-                                        <th>ID</th>
                                         <th>Username</th>
+                                        <th>E-mail</th>
                                         <th>Name</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr ng-repeat="user in users" ng-click="select(user.id)" ng-class="{'active' : isActive(user.id)}">
-                                        <td>{{user.id}}</td>
-                                        <td><span class="badge activeBadge" ng-if="user.active==1">active</span><span class="badge notActiveBadge" ng-if="user.active==0">inactive</span> {{user.username}}</td>
-                                        <td>{{user.first_name}} {{user.last_name}}</td>
+                                        <td>{{user.user_name}}</td>
+                                        <td><span class="badge activeBadge" ng-if="user.active==1">active</span><span class="badge notActiveBadge" ng-if="user.active==0">inactive</span> {{user.email}}</td>
+                                        <td>{{user.first_name}} {{user.last_name}} <span ng-show="user.id == selected.id" class="glyphicon glyphicon-chevron-right pull-right"></span></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -46,7 +53,7 @@
                         <div class="col-lg-6">
                             <div class="panel panel-default">
                                     <div class="panel-heading">
-                                        <h5>{{selected.username}} | {{selected.first_name}} {{selected.last_name}}<h5>
+                                        <h5>{{selected.email}} | {{selected.first_name}} {{selected.last_name}}<h5>
                                     </div>
                                     <div class="panel-body">
                                         <div class="input-group pulltop">
@@ -64,12 +71,14 @@
                                                 {{type.name}}
                                              </option>
                                         </select>
+                                        <p>Username</p>
+                                        <input class="form-control pulltop strong" ng-model="selected.user_name" ng-disabled="true">
                                         <p>First name</p>
                                         <input class="form-control pulltop" ng-model="selected.first_name">
                                         <p>Last name</p>
                                         <input class="form-control pulltop" ng-model="selected.last_name">
                                         <p>E-mail</p>
-                                        <input class="form-control pulltop" ng-model="selected.email">
+                                        <input class="form-control pulltop" ng-model="selected.email" ng-disabled="true">
                                         <p>Password</p>
                                         <input class="form-control pulltop" ng-model="selected.password">
                                         <p>Country</p>
@@ -84,7 +93,7 @@
                                         <input class="form-control pulltop" ng-model="selected.phone">
                                         <p>Registration date</p> 
                                         <input class="form-control pulltop" ng-disabled="true" ng-model="selected.registration_date">
-                                        <button ng-click="saveUser()" class="btn btn-primary saveButton pulltop pull-right">SAVE</button>
+                                        <button ng-click="saveUser()" class="btn btn-primary saveButton btn-margin-right pulltop pull-right"><span class="glyphicon glyphicon-floppy-disk"></span> Save</button>
                                         <hr class="pulltop">
                                         <p ng-show="!ordersLoaded">Loading orders...</p>
                                         <table class="table table-bordered table-hover" ng-show="ordersLoaded">
@@ -104,7 +113,12 @@
 
                                                         <span ng-if="order.status==1" class="glyphicon glyphicon-time"> Pending</span>
                                                         
-                                                        <span ng-if="order.status==0" class="glyphicon glyphicon-remove"> Not active</span> </td>
+                                                        <span ng-if="order.status==0" class="glyphicon glyphicon-remove"> Not active</span> 
+
+                                                        <span ng-if="order.status==3" class="glyphicon glyphicon-warning-sign"> Canceled</span>
+
+                                                        <span ng-if="order.status==4" class="glyphicon glyphicon-bell"> Finished</span>
+                                                    </td>
                                                 </tr>
                                             </tbody>
                                         </table>

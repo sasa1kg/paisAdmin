@@ -1,8 +1,13 @@
-angular.module('adminApp').controller("operatorsCtrl", ["$scope", "$http", "$filter", "ServerService",  
-	function (scope, http, filter, ServerService) {
+angular.module('adminApp').controller("operatorsCtrl", ["$scope", "$http", "$filter", "ServerService", "Excel", "$timeout",
+	function (scope, http, filter, ServerService, Excel, timeout) {
 
 	console.log("operatorsCtrl!");
 	scope.msg = "operatorsCtrl!";
+
+	scope.exportToExcel = function (tableId) {
+		scope.exportHref=Excel.tableToExcel(tableId,'sheet name');
+        timeout(function(){location.href=scope.exportHref;},100); 
+	}
 
 	scope.adminName = "Pais admin";
 
@@ -29,13 +34,13 @@ angular.module('adminApp').controller("operatorsCtrl", ["$scope", "$http", "$fil
 	scope.newOperator = {
 		"company_id" : "",
         "company_name":"",
-        "username":"",
         "email":"",
         "password":"",
+        "user_name" : "",
         "first_name":"",
         "last_name":"",
         "phone":"",
-        "active":"1"
+        "active": 1
 	}
 
 
@@ -138,7 +143,7 @@ angular.module('adminApp').controller("operatorsCtrl", ["$scope", "$http", "$fil
 	        alert("Please enter operators last name.");
 	        return;
 	      }
-	      if (scope.newOperator.username.length < 1) {
+	      if (scope.newOperator.user_name.length < 1) {
 	        alert("Please enter operators username.");
 	        return;
 	      }

@@ -54,6 +54,11 @@ body{
 
 .submitbutton {
 	margin-bottom: 20px !important;
+	width: 100% !important;
+}
+
+.button-marginBottom {
+	margin-bottom: 20px !important;
 }
 
 .insideloginform {
@@ -70,6 +75,10 @@ body{
 #map-canvas-results {
 	width:100%;
     height: 50%;
+ }
+ #map-canvas-results-small {
+	width:100%;
+    height: 200px;
  }
 
 .angular-google-map-container { 
@@ -153,6 +162,20 @@ body{
 .notActiveBadge {
 	background-color: red !important;
 }
+.canceledBadge {
+	background-color: #cc0099 !important;
+}
+.finishedBadge {
+	background-color: #0000ff !important;
+}
+.canceledBtn {
+	background-color: #cc0099 !important;
+	color: white !important;
+}
+.finishedBtn {
+	background-color: #0000ff !important;
+	color: white !important;
+}
 .panelSmall {
 	background-color: blue !important;
 	color: white !important;
@@ -181,4 +204,105 @@ body{
 .activePagging {
 	color: white !important;
 	background-color: #202 !important;
+}
+#map-canvas-results {
+	width:100%;
+    height: 80%;
+    min-height: 700px;
+}
+.imageResultsTable {
+	margin-top: 61px !important;
+	max-height: 500px;
+	overflow-y: scroll;
+}
+.kmlResultTable {
+	max-height: 500px;
+	overflow-y: scroll;
+}
+.logoExt {
+	max-height: 30px;
+}
+.footer {
+	background-color: #f5f5f5;
+	height: 70px;
+	width: 100%;
+	position: absolute;
+	bottom: 0px;
+	left: 0px;
+	padding-top: 20px;
+	opacity: 0.7;
+}
+.contExt {
+	background-color: #f5f5f5;
+}
+.logHolder {
+	background: white !important;
+	border: 1px solid black;
+	border-radius: 10px;
+	padding-top: 10px;
+}
+.statsCard {
+	border: 2px solid;
+	border-radius: 5px;
+	min-height: 100px;
+	margin-top: 10px;
+}
+.statsCardIcon {
+	margin-top: 10px;
+	font-size: 4em !important;
+}
+.statsCardText {
+	font-size: 2.5em;
+	margin-top: 20px;
+}
+.statsCardTextSmall {
+	font-size: 0.9em;
+}
+.statsCardTextSmallDate {
+	font-size: 0.9em;
+	margin-top: 10px;
+}
+.statsCardTextDate {
+	font-size: 2em;
+}
+.vcenter {
+    display: inline-block;
+    vertical-align: middle;
+    float: none;
+}
+.descText {
+	color: white !important;
+}
+.transactionHeader {
+	background-color: #007a99;
+	color: white;
+}
+.transactionData {
+	background-color: #b3efff;
+}
+.sensorReportHeader {
+	background-color: #339900;
+	color: white;
+}
+.panelDateBody {
+	padding : 20px !important;
+}
+.full-btn {
+	width: 100% !important;
+	margin-top: 20px !important;
+}
+.reportPanel {
+	padding-top: 70px !important;
+}
+.separatorReport {
+	height: 2px !important;
+	background: black;
+	width: 100% !important;
+	margin-bottom: 20px !important;
+}
+.btnInAlert {
+	margin-top: -8px !important;
+}
+.sensorsCol {
+	min-width: 150px !important;
 }

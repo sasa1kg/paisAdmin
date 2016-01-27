@@ -2,14 +2,22 @@ var ServerService = angular.module('ServerService', [])
 	.service('ServerService', ["$q", "$http", "$location", 'localStorageService',
     function (q, http, location, localStorageService) {
 
-	var serverurl = 'http://195.220.224.164/';
+	var serverurl = 'http://195.220.224.164/PEP/';
   	var user = "";
+  var logout_url = "http://www.agro-pais.com/logout.php";
 
-  var putUserInStorage = function (user) {
+  this.putUserInStorage = function (user) {
     localStorageService.set("adminObject", user);
   }
 
   this.clearUserInStorage = function () {
+        var keys = localStorageService.keys();
+        for (var i = keys.length - 1; i >= 0; i--) {
+              localStorageService.remove(keys[i]);
+        };
+  }
+
+   var clearUserInStorage = function () {
         var keys = localStorageService.keys();
         for (var i = keys.length - 1; i >= 0; i--) {
               localStorageService.remove(keys[i]);
@@ -57,6 +65,9 @@ var ServerService = angular.module('ServerService', [])
                       putUserInStorage(data);
                       deffered.resolve(true);
                     
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");
@@ -70,9 +81,32 @@ var ServerService = angular.module('ServerService', [])
 
       return deffered.promise;
   }
+
+
   this.logout = function (object) {
-      this.clearUserInStorage();
-      location.path("/login");
+        var userLS = getUserInStorage();
+        if (userLS == null) {
+            location.path("/login");
+        }
+       clearUserInStorage();
+       location.path("/login");
+      //   var deffered = q.defer();
+      // http.get("http://195.220.224.164/auth/logout", {
+      //   headers: {'X-Auth-Token': userLS.token}
+      //  }).
+      //         success(function(data, status) {
+      //             clearUserInStorage();
+      //             location.path(logout_url);
+      //         }).
+      //         error(function(data, status) {
+      //              console.log("Error " + status);
+      //              deffered.reject("Error");
+      //             clearUserInStorage();
+      //             location.path(logout_url);
+                   
+      //         });
+      //  return deffered.promise;
+
   }
 
   this.updateClient = function (user) {
@@ -81,13 +115,174 @@ var ServerService = angular.module('ServerService', [])
       location.path("/login");
     }
     var deffered = q.defer();
-       http.put(serverurl + "pais/clients", user).
+       http.put(serverurl + "pais/clients", user, {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 var result = JSON.stringify(data);
                 var dataJSON = JSON.parse(result);
                 if (status == 200) {
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
+                   console.log("Status not OK " + status);
+                   deffered.reject("Error");
+                }
+                
+              }).
+              error(function(data, status) {
+                   console.log("Error " + status);
+                   deffered.reject("Error");
+              });
+       return deffered.promise;
+  }
+
+  this.activateAccount = function (client_id) {
+    var userLS = getUserInStorage();
+    var token = "";
+     if (userLS != null) {
+        token = userLS.token;
+      }
+    var deffered = q.defer();
+       http.post(serverurl + "pais/clients/"  +  client_id + "/activate", {}, {
+        headers: {'X-Auth-Token': token}
+       }).success(function(data, status) {
+                if (status == 200) {
+                    deffered.resolve(data);
+                } else {
+                   console.log("Status not OK " + status);
+                   deffered.reject("Error");
+                }
+                
+              }).
+              error(function(data, status) {
+                   console.log("Error " + status);
+                   deffered.reject("Error");
+              });
+       return deffered.promise;
+  }
+
+
+  this.activateAccountOperator = function (client_id) {
+    var userLS = getUserInStorage();
+    var token = "";
+     if (userLS != null) {
+        token = userLS.token;
+      }
+    var deffered = q.defer();
+       http.post(serverurl + "pais/operators/"  +  client_id + "/activate", {}, {
+        headers: {'X-Auth-Token': token}
+       }).success(function(data, status) {
+                if (status == 200) {
+                    deffered.resolve(data);
+                } else {
+                   console.log("Status not OK " + status);
+                   deffered.reject("Error");
+                }
+                
+              }).
+              error(function(data, status) {
+                   console.log("Error " + status);
+                   deffered.reject("Error");
+              });
+       return deffered.promise;
+  }
+
+
+  this.deactivateAccountOperator = function (client_id) {
+    var userLS = getUserInStorage();
+    var token = "";
+     if (userLS != null) {
+        token = userLS.token;
+      }
+    var deffered = q.defer();
+       http.post(serverurl + "pais/operators/"  +  client_id + "/deactivate", {}, {
+        headers: {'X-Auth-Token': token}
+       }).success(function(data, status) {
+                if (status == 200) {
+                    deffered.resolve(data);
+                } else {
+                   console.log("Status not OK " + status);
+                   deffered.reject("Error");
+                }
+                
+              }).
+              error(function(data, status) {
+                   console.log("Error " + status);
+                   deffered.reject("Error");
+              });
+       return deffered.promise;
+  }
+
+
+
+  this.deactivateAccount = function (client_id) {
+    var userLS = getUserInStorage();
+    var token = "";
+     if (userLS != null) {
+        token = userLS.token;
+      }
+    var deffered = q.defer();
+       http.post(serverurl + "pais/clients/"  +  client_id + "/deactivate", {}, {
+        headers: {'X-Auth-Token': token}
+       }).success(function(data, status) {
+                if (status == 200) {
+                    deffered.resolve(data);
+                } else {
+                   console.log("Status not OK " + status);
+                   deffered.reject("Error");
+                }
+                
+              }).
+              error(function(data, status) {
+                   console.log("Error " + status);
+                   deffered.reject("Error");
+              });
+       return deffered.promise;
+  }
+
+  this.changePassword = function (client_id, passwordObj) {
+    var userLS = getUserInStorage();
+    var token = "";
+     if (userLS != null) {
+        token = userLS.token;
+      }
+    var deffered = q.defer();
+       http.put(serverurl + "pais/clients/"  +  client_id + "/changePassword", passwordObj, {
+        headers: {'X-Auth-Token': token}
+       }).success(function(data, status) {
+                if (status == 200) {
+                    deffered.resolve(data);
+                } else {
+                   console.log("Status not OK " + status);
+                   deffered.reject("Error");
+                }
+                
+              }).
+              error(function(data, status) {
+                   console.log("Error " + status);
+                   deffered.reject("Error");
+              });
+       return deffered.promise;
+  }
+
+
+  this.changePasswordOperator = function (client_id, passwordObj) {
+    var userLS = getUserInStorage();
+    var token = "";
+     if (userLS != null) {
+        token = userLS.token;
+      }
+    var deffered = q.defer();
+       http.put(serverurl + "pais/operators/"  +  client_id + "/changePassword", passwordObj, {
+        headers: {'X-Auth-Token': token}
+       }).success(function(data, status) {
+                if (status == 200) {
+                    deffered.resolve(data);
+                } else {
+                   console.log("Status not OK " + status);
                    deffered.reject("Error");
                 }
                 
@@ -106,13 +301,18 @@ var ServerService = angular.module('ServerService', [])
       location.path("/login");
     }
 		 var deffered = q.defer();
-    	 http.get(serverurl + "pais/clients/" + id).
+    	 http.get(serverurl + "pais/clients/" + id, {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 //var result = JSON.stringify(data);
                 //var dataJSON = JSON.parse(result);
                 if (status == 200) {
                     console.log(JSON.stringify(data));
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");
@@ -132,12 +332,17 @@ var ServerService = angular.module('ServerService', [])
       location.path("/login");
     }   
 		 var deffered = q.defer();
-    	 http.get(serverurl + "pais/clients").
+    	 http.get(serverurl + "pais/clients", {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 //var result = JSON.stringify(data);
                 //var dataJSON = JSON.parse(result);
                 if (status == 200) {
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");
@@ -160,14 +365,19 @@ var ServerService = angular.module('ServerService', [])
     }    
  		var deffered = q.defer();
     	console.log("registerUser " + user);
-    	 http.post(serverurl + "pais/clients", user).
+    	 http.post(serverurl + "pais/clients", user, {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 //var result = JSON.stringify(data);
                 //var dataJSON = JSON.parse(result);
                 if (status == 200) {
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
-                   console.log("Status not OK");
+                   console.log("Status not OK " + status);
                    deffered.reject("Error");
                 }
                 
@@ -185,12 +395,17 @@ var ServerService = angular.module('ServerService', [])
       location.path("/login");
     }
       var deffered = q.defer();
-      http.get(serverurl + "pais/clientTypes").
+      http.get(serverurl + "pais/clientTypes", {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 //var result = JSON.stringify(data);
                 //var dataJSON = JSON.parse(result);
                 if (status == 200) {
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");
@@ -210,12 +425,17 @@ var ServerService = angular.module('ServerService', [])
       location.path("/login");
     }    
       var deffered = q.defer();
-      http.get(serverurl + "pais/cities").
+      http.get(serverurl + "pais/cities", {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 //var result = JSON.stringify(data);
                 //var dataJSON = JSON.parse(result);
                 if (status == 200) {
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");
@@ -235,12 +455,17 @@ var ServerService = angular.module('ServerService', [])
       location.path("/login");
     }    
       var deffered = q.defer();
-      http.post(serverurl + "pais/cities", city).
+      http.post(serverurl + "pais/cities", city, {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 //var result = JSON.stringify(data);
                 //var dataJSON = JSON.parse(result);
                 if (status == 200) {
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");
@@ -261,12 +486,17 @@ var ServerService = angular.module('ServerService', [])
       location.path("/login");
     }
       var deffered = q.defer();
-      http.delete(serverurl + "pais/cities/" + id).
+      http.delete(serverurl + "pais/cities/" + id, {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 //var result = JSON.stringify(data);
                 //var dataJSON = JSON.parse(result);
                 if (status == 200) {
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");
@@ -286,12 +516,17 @@ var ServerService = angular.module('ServerService', [])
       location.path("/login");
     }
       var deffered = q.defer();
-      http.get(serverurl + "pais/countries").
+      http.get(serverurl + "pais/countries", {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 //var result = JSON.stringify(data);
                 //var dataJSON = JSON.parse(result);
                 if (status == 200) {
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");
@@ -311,12 +546,17 @@ var ServerService = angular.module('ServerService', [])
       location.path("/login");
     }
       var deffered = q.defer();
-      http.post(serverurl + "pais/countries", country).
+      http.post(serverurl + "pais/countries", country, {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 //var result = JSON.stringify(data);
                 //var dataJSON = JSON.parse(result);
                 if (status == 200) {
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");
@@ -336,12 +576,17 @@ var ServerService = angular.module('ServerService', [])
       location.path("/login");
     }
       var deffered = q.defer();
-      http.delete(serverurl + "pais/countries/" + id).
+      http.delete(serverurl + "pais/countries/" + id, {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 //var result = JSON.stringify(data);
                 //var dataJSON = JSON.parse(result);
                 if (status == 200) {
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");
@@ -361,12 +606,17 @@ var ServerService = angular.module('ServerService', [])
       location.path("/login");
     }
       var deffered = q.defer();
-      http.put(serverurl + "pais/countries", country).
+      http.put(serverurl + "pais/countries", country, {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 //var result = JSON.stringify(data);
                 //var dataJSON = JSON.parse(result);
                 if (status == 200) {
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");
@@ -391,10 +641,15 @@ var ServerService = angular.module('ServerService', [])
       location.path("/login");
     }    
       var deffered = q.defer();
-      http.get(serverurl + "pais/sensorTypesDetailed").
+      http.get(serverurl + "pais/sensorTypesDetailed", {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 if (status == 200) {
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");
@@ -414,10 +669,15 @@ var ServerService = angular.module('ServerService', [])
       location.path("/login");
     }
       var deffered = q.defer();
-      http.get(serverurl + "pais/sensorTypes/" + id).
+      http.get(serverurl + "pais/sensorTypes/" + id, {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 if (status == 200) {
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");
@@ -437,10 +697,15 @@ var ServerService = angular.module('ServerService', [])
       location.path("/login");
     }
       var deffered = q.defer();
-      http.post(serverurl + "pais/sensorTypes", sensor).
+      http.post(serverurl + "pais/sensorTypes", sensor, {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 if (status == 200) {
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");
@@ -460,10 +725,15 @@ var ServerService = angular.module('ServerService', [])
       location.path("/login");
     }
       var deffered = q.defer();
-      http.put(serverurl + "pais/sensorTypes", sensor).
+      http.put(serverurl + "pais/sensorTypes", sensor, {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 if (status == 200) {
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");
@@ -483,10 +753,15 @@ var ServerService = angular.module('ServerService', [])
       location.path("/login");
     }
       var deffered = q.defer();
-      http.delete(serverurl + "pais/sensorTypes/" + id).
+      http.delete(serverurl + "pais/sensorTypes/" + id, {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 if (status == 200) {
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");
@@ -506,10 +781,15 @@ var ServerService = angular.module('ServerService', [])
       location.path("/login");
     }
       var deffered = q.defer();
-      http.get(serverurl + "pais/uoms/" + id).
+      http.get(serverurl + "pais/uoms/" + id, {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 if (status == 200) {
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");
@@ -529,10 +809,15 @@ var ServerService = angular.module('ServerService', [])
       location.path("/login");
     }
       var deffered = q.defer();
-      http.get(serverurl + "pais/uoms").
+      http.get(serverurl + "pais/uoms", {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 if (status == 200) {
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");
@@ -552,10 +837,15 @@ var ServerService = angular.module('ServerService', [])
       location.path("/login");
     }
       var deffered = q.defer();
-      http.post(serverurl + "pais/uoms", uom).
+      http.post(serverurl + "pais/uoms", uom, {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 if (status == 200) {
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");
@@ -575,10 +865,15 @@ var ServerService = angular.module('ServerService', [])
       location.path("/login");
     }
       var deffered = q.defer();
-      http.put(serverurl + "pais/uoms", uom).
+      http.put(serverurl + "pais/uoms", uom, {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 if (status == 200) {
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");
@@ -598,10 +893,15 @@ var ServerService = angular.module('ServerService', [])
       location.path("/login");
     }
       var deffered = q.defer();
-      http.delete(serverurl + "pais/uoms/" + id).
+      http.delete(serverurl + "pais/uoms/" + id, {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 if (status == 200) {
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");
@@ -623,10 +923,15 @@ var ServerService = angular.module('ServerService', [])
       location.path("/login");
     }
       var deffered = q.defer();
-      http.get(serverurl + "pais/sensorTypes/" + sensorTypesId + "/uoms").
+      http.get(serverurl + "pais/sensorTypes/" + sensorTypesId + "/uoms", {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 if (status == 200) {
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");
@@ -640,13 +945,12 @@ var ServerService = angular.module('ServerService', [])
        return deffered.promise;
   } 
 
-    this.getSensorResults = function (orderId, sensorId, clientId, resultObject) {
-    var userLS = getUserInStorage();
-    if (userLS == null) {
-      location.path("/login");
-    }
+    this.getSensorResults = function (clientId, orderId, stationId, sensorId, resultObject) {
+      var userLS = getUserInStorage();
       var deffered = q.defer();
-      http.post(serverurl + "pais/clients/" + clientId + "/orders/"+ orderId +"/results/sensors/" + sensorId, resultObject).
+      http.post(serverurl + "pais/clients/" + clientId + "/orders/"+ orderId + "/stations/" + stationId + "/resultsForInterval/sensors/" + sensorId, resultObject, {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 if (status == 200) {
                     console.log("Received 200");
@@ -654,6 +958,9 @@ var ServerService = angular.module('ServerService', [])
                 } else if (status == 404) {
                     console.log("Received 404");
                     deffered.reject("NA");
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");
@@ -667,33 +974,219 @@ var ServerService = angular.module('ServerService', [])
        return deffered.promise;
   } 
 
-  /*-------------------------------------------------------------------------*/
-  /*---------------------- ORDER OPERATIONS --------------------------------*/
 
-  this.clientOrder = function (clientId, orderId) {
-    var userLS = getUserInStorage();
-    if (userLS == null) {
-      location.path("/login");
-    }
+  this.getSensorStatistics = function (clientId, orderId, stationId, sensorId, resultObject) {
       var userLS = getUserInStorage();
-      if (userLS == null) {
-        location.path("/login");
-      }
       var deffered = q.defer();
-      http.get(serverurl + "pais/clients/" + userLS.id + "/orders/" + orderId).
+      http.post(serverurl + "pais/clients/" + clientId + "/orders/"+ orderId + "/stations/" + stationId +"/resultsForInterval/sensors/" + sensorId + "/statistics", resultObject, {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 if (status == 200) {
+                    console.log("Received 200");
                     deffered.resolve(data);
+                } else if (status == 404) {
+                    console.log("Received 404");
+                    deffered.reject("NA");
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
+                   console.log("Status not OK " + status);
                    deffered.reject("Error");
                 }
                 
               }).
               error(function(data, status) {
+                   console.log("Error " + status);
+                   deffered.reject("Error");
+              });
+       return deffered.promise;
+  } 
+
+  this.getAllSensorStatistics = function (resultObject) {
+      var userLS = getUserInStorage();
+      var deffered = q.defer();
+      http.post(serverurl + "pais/reports/stations/all/statistics", resultObject, {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
+              success(function(data, status) {
+                if (status == 200) {
+                    console.log("Received 200");
+                    deffered.resolve(data);
+                } else if (status == 404) {
+                    console.log("Received 404");
+                    deffered.reject("NA");
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
+                } else {
+                   console.log("Status not OK " + status);
+                   deffered.reject("Error");
+                }
+                
+              }).
+              error(function(data, status) {
+                   console.log("Error " + status);
                    deffered.reject("Error");
               });
        return deffered.promise;
   }
+
+
+  this.getSensorStationStatics = function (resultObject) {
+    var userLS = getUserInStorage();
+    var deffered = q.defer();
+    http.post(serverurl + "pais/reports/sensors/all/statistics", resultObject, {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
+              success(function(data, status) {
+                if (status == 200) {
+                    console.log("Received 200");
+                    deffered.resolve(data);
+                } else if (status == 404) {
+                    console.log("Received 404");
+                    deffered.reject("NA");
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
+                } else {
+                   console.log("Status not OK " + status);
+                   deffered.reject("Error");
+                }
+                
+              }).
+              error(function(data, status) {
+                   console.log("Error " + status);
+                   deffered.reject("Error");
+              });
+       return deffered.promise;
+
+  }
+
+  this.getTransactions = function (transactionObject) {
+      var userLS = getUserInStorage();
+      var deffered = q.defer();
+      http.post(serverurl + "pais/reports/transactions/all", transactionObject, {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
+              success(function(data, status) {
+                if (status == 200) {
+                    console.log("Received 200");
+                    deffered.resolve(data);
+                } else if (status == 404) {
+                    console.log("Received 404");
+                    deffered.reject("NA");
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
+                } else {
+                   console.log("Status not OK " + status);
+                   deffered.reject("Error");
+                }
+                
+              }).
+              error(function(data, status) {
+                   console.log("Error " + status);
+                   deffered.reject("Error");
+              });
+       return deffered.promise;
+  } 
+
+
+
+  this.getSensorStatisticsAllTime = function (clientId, orderId, stationId, sensorId) {
+      var userLS = getUserInStorage();
+      var deffered = q.defer();
+      http.post(serverurl + "pais/clients/" + clientId + "/orders/"+ orderId + "/stations/" + stationId +  "/results/sensors/" + sensorId + "/statistics", {}, {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
+              success(function(data, status) {
+                if (status == 200) {
+                    console.log("Received 200");
+                    deffered.resolve(data);
+                } else if (status == 404) {
+                    console.log("Received 404");
+                    deffered.reject("NA");
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
+                } else {
+                   console.log("Status not OK " + status);
+                   deffered.reject("Error");
+                }
+                
+              }).
+              error(function(data, status) {
+                   console.log("Error " + status);
+                   deffered.reject("Error");
+              });
+       return deffered.promise;
+  }
+
+
+  this.getKMLs = function (clientId, orderId) {
+      var userLS = getUserInStorage();
+      var deffered = q.defer();
+      http.get(serverurl + "pais/clients/" + clientId + "/orders/"+ orderId +"/klms", {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
+              success(function(data, status) {
+                if (status == 200) {
+                    console.log("Received 200");
+                    deffered.resolve(data);
+                } else if (status == 404) {
+                    console.log("Received 404");
+                    deffered.reject("NA");
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
+                } else {
+                   console.log("Status not OK " + status);
+                   deffered.reject("Error");
+                }
+                
+              }).
+              error(function(data, status) {
+                   console.log("Error " + status);
+                   deffered.reject("Error");
+              });
+       return deffered.promise;
+  }
+
+
+  this.getAllPayedClients = function (DateObj) {
+      var userLS = getUserInStorage();
+      var deffered = q.defer();
+      http.post(serverurl + "pais/reports/clients/all/statistics", DateObj, {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
+              success(function(data, status) {
+                if (status == 200) {
+                    console.log("Received 200");
+                    deffered.resolve(data);
+                } else if (status == 404) {
+                    console.log("Received 404");
+                    deffered.reject("NA");
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
+                } else {
+                   console.log("Status not OK " + status);
+                   deffered.reject("Error");
+                }
+                
+              }).
+              error(function(data, status) {
+                   console.log("Error " + status);
+                   deffered.reject("Error");
+              });
+       return deffered.promise;
+  }
+
+  /*-------------------------------------------------------------------------*/
+  /*---------------------- ORDER OPERATIONS --------------------------------*/
+
 
   this.clientOrders = function (clientId) {
     var userLS = getUserInStorage();
@@ -701,11 +1194,17 @@ var ServerService = angular.module('ServerService', [])
       location.path("/login");
     }
       var deffered = q.defer();
-      http.get(serverurl + "pais/clients/" + clientId + "/orders").
+      http.get(serverurl + "pais/clients/" + clientId + "/orders", {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 if (status == 200) {
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
+                   console.log("Status not OK " + status);
                    deffered.reject("Error");
                 }
               }).
@@ -721,11 +1220,17 @@ var ServerService = angular.module('ServerService', [])
       location.path("/login");
     }
       var deffered = q.defer();
-      http.post(serverurl + "pais/clients/"+ clientId +"/orders/"+ order_id +"/assingOperator", orderObject).
+      http.post(serverurl + "pais/clients/"+ clientId +"/orders/"+ order_id +"/assingOperator", orderObject, {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 if (status == 200) {
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
+                   console.log("Status not OK " + status);
                    deffered.reject("Error");
                 }
               }).
@@ -744,10 +1249,15 @@ var ServerService = angular.module('ServerService', [])
       location.path("/login");
     }
       var deffered = q.defer();
-      http.get(serverurl + "pais/clients/" + clientId + "/orders/" + orderId + "/details").
+      http.get(serverurl + "pais/clients/" + clientId + "/orders/" + orderId + "/details", {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 if (status == 200) {
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");
@@ -761,16 +1271,79 @@ var ServerService = angular.module('ServerService', [])
        return deffered.promise;
   }
 
+
+  this.cancelOrder = function (clientId, orderId) {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
+      var deffered = q.defer();
+      http.post(serverurl + "pais/clients/" + clientId + "/orders/" + orderId + "/cancelOrder", {}, {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
+              success(function(data, status) {
+                if (status == 200) {
+                    deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
+                } else {
+                   console.log("Status not OK " + status);
+                   deffered.reject("Error");
+                }
+                
+              }).
+              error(function(data, status) {
+                   console.log("Error " + status);
+                   deffered.reject("Error");
+              });
+       return deffered.promise;
+  }
+
+  this.finishOrder = function (clientId, orderId) {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
+      var deffered = q.defer();
+      http.post(serverurl + "pais/clients/" + clientId + "/orders/" + orderId + "/finishOrder", {}, {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
+              success(function(data, status) {
+                if (status == 200) {
+                    deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
+                } else {
+                   console.log("Status not OK " + status);
+                   deffered.reject("Error");
+                }
+                
+              }).
+              error(function(data, status) {
+                   console.log("Error " + status);
+                   deffered.reject("Error");
+              });
+       return deffered.promise;
+  } 
+
+
     this.getAllOrders = function () {
     var userLS = getUserInStorage();
     if (userLS == null) {
       location.path("/login");
     }
       var deffered = q.defer();
-      http.get(serverurl + "pais/orders").
+      http.get(serverurl + "pais/orders", {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 if (status == 200) {
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");
@@ -790,10 +1363,15 @@ var ServerService = angular.module('ServerService', [])
       location.path("/login");
     }
       var deffered = q.defer();
-      http.get(serverurl + "pais/orders/count?status=" + filter).
+      http.get(serverurl + "pais/orders/count?status=" + filter, {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 if (status == 200) {
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");
@@ -816,10 +1394,15 @@ var ServerService = angular.module('ServerService', [])
       location.path("/login");
     }
       var deffered = q.defer();
-      http.get(serverurl + "pais/orders?status=" + filter).
+      http.get(serverurl + "pais/orders?status=" + filter, {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 if (status == 200) {
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");
@@ -839,10 +1422,15 @@ var ServerService = angular.module('ServerService', [])
       location.path("/login");
     }
       var deffered = q.defer();
-      http.get(serverurl + "pais/orders?status=" + status).
+      http.get(serverurl + "pais/orders?status=" + status, {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 if (status == 200) {
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");
@@ -862,10 +1450,15 @@ var ServerService = angular.module('ServerService', [])
       location.path("/login");
     }
       var deffered = q.defer();
-      http.get(serverurl + "pais/orders/count?status=" + status).
+      http.get(serverurl + "pais/orders/count?status=" + status, {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 if (status == 200) {
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");
@@ -881,20 +1474,49 @@ var ServerService = angular.module('ServerService', [])
 
 
 
-  this.clientOrderSensors = function (clientId, orderId, sensorId) {
+  this.clientOrderSensors = function (clientId, orderId, stationId, sensorId) {
     var userLS = getUserInStorage();
     if (userLS == null) {
       location.path("/login");
     }
-      var userLS = getUserInStorage();
-      if (userLS == null) {
-        location.path("/login");
-      }
-      var deffered = q.defer();
-      http.get(serverurl + "pais/clients/" + userLS.id + "/orders/" + orderId + "/sensors/" + sensorId).
+    var deffered = q.defer();
+    http.get(serverurl + "pais/clients/" + clientId + "/orders/" + orderId + "/stations/" + stationId +"/sensors/" + sensorId, {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 if (status == 200) {
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
+                } else {
+                   console.log("Status not OK " + status);
+                   deffered.reject("Error");
+                }
+                
+              }).
+              error(function(data, status) {
+                   console.log("Error " + status);
+                   deffered.reject("Error");
+              });
+    return deffered.promise;
+  }
+
+  this.clientOrderImages = function (clientId, orderId) {
+    var userLS = getUserInStorage();
+    if (userLS == null) {
+      location.path("/login");
+    }
+    var deffered = q.defer();
+      http.get(serverurl + "pais/clients/" + clientId + "/orders/" + orderId + "/images", {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
+              success(function(data, status) {
+                if (status == 200) {
+                    deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");
@@ -914,19 +1536,20 @@ var ServerService = angular.module('ServerService', [])
     if (userLS == null) {
       location.path("/login");
     }
-    var userLS = getUserInStorage();
-      if (userLS == null) {
-        location.path("/login");
-      }
     var deffered = q.defer();
       console.log("evaluateOrder " + clientId);
-       http.post(serverurl + "pais/clients/" + userLS.id + "/evaluateOrder", order).
+       http.post(serverurl + "pais/clients/" + userLS.id + "/evaluateOrder", order, {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 if (status == 200) {
                     console.log("Status OK");
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
-                   console.log("Status not OK");
+                   console.log("Status not OK " + status);
                    deffered.reject("Error");
                 }
               }).
@@ -944,13 +1567,18 @@ var ServerService = angular.module('ServerService', [])
       }
     var deffered = q.defer();
       console.log("evaluateOrder " + user);
-       http.post(serverurl + "pais/clients/" + userLS.id + "/orders", order).
+       http.post(serverurl + "pais/clients/" + userLS.id + "/orders", order, {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 if (status == 200) {
                     console.log("Status OK");
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
-                   console.log("Status not OK");
+                   console.log("Status not OK " + status);
                    deffered.reject("Error");
                 }
               }).
@@ -970,10 +1598,15 @@ var ServerService = angular.module('ServerService', [])
       location.path("/login");
     }
       var deffered = q.defer();
-      http.get(serverurl + "pais/frequencies").
+      http.get(serverurl + "pais/frequencies", {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 if (status == 200) {
                     deffered.resolve(data);
+                }  else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");
@@ -993,10 +1626,15 @@ var ServerService = angular.module('ServerService', [])
       location.path("/login");
     }
       var deffered = q.defer();
-      http.put(serverurl + "pais/frequencies", freq).
+      http.put(serverurl + "pais/frequencies", freq, {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 if (status == 200) {
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");
@@ -1016,10 +1654,15 @@ var ServerService = angular.module('ServerService', [])
       location.path("/login");
     }
       var deffered = q.defer();
-      http.delete(serverurl + "pais/frequencies/" + id).
+      http.delete(serverurl + "pais/frequencies/" + id, {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 if (status == 200) {
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");
@@ -1040,10 +1683,15 @@ var ServerService = angular.module('ServerService', [])
       location.path("/login");
     }
       var deffered = q.defer();
-      http.post(serverurl + "pais/frequencies", freq).
+      http.post(serverurl + "pais/frequencies", freq, {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 if (status == 200) {
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");
@@ -1067,10 +1715,15 @@ var ServerService = angular.module('ServerService', [])
       location.path("/login");
     }
       var deffered = q.defer();
-      http.get(serverurl + "pais/imageTypes").
+      http.get(serverurl + "pais/imageTypes", {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 if (status == 200) {
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");
@@ -1090,10 +1743,15 @@ var ServerService = angular.module('ServerService', [])
       location.path("/login");
     }
       var deffered = q.defer();
-      http.put(serverurl + "pais/imageTypes", imageType).
+      http.put(serverurl + "pais/imageTypes", imageType, {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 if (status == 200) {
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");
@@ -1113,10 +1771,15 @@ var ServerService = angular.module('ServerService', [])
       location.path("/login");
     }
       var deffered = q.defer();
-      http.post(serverurl + "pais/imageTypes", imageType).
+      http.post(serverurl + "pais/imageTypes", imageType, {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 if (status == 200) {
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");
@@ -1136,10 +1799,15 @@ var ServerService = angular.module('ServerService', [])
       location.path("/login");
     }
       var deffered = q.defer();
-      http.delete(serverurl + "pais/imageTypes/" + id).
+      http.delete(serverurl + "pais/imageTypes/" + id, {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 if (status == 200) {
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");
@@ -1162,10 +1830,15 @@ var ServerService = angular.module('ServerService', [])
       location.path("/login");
     }
       var deffered = q.defer();
-      http.get(serverurl + "pais/operators/companies").
+      http.get(serverurl + "pais/operators/companies", {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 if (status == 200) {
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");
@@ -1186,10 +1859,15 @@ var ServerService = angular.module('ServerService', [])
       location.path("/login");
     }
       var deffered = q.defer();
-      http.post(serverurl + "pais/operators/companies", company).
+      http.post(serverurl + "pais/operators/companies", company, {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 if (status == 200) {
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");
@@ -1210,10 +1888,15 @@ var ServerService = angular.module('ServerService', [])
       location.path("/login");
     }
       var deffered = q.defer();
-      http.delete(serverurl + "pais/operators/companies/" + id).
+      http.delete(serverurl + "pais/operators/companies/" + id, {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 if (status == 200) {
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");
@@ -1234,10 +1917,15 @@ var ServerService = angular.module('ServerService', [])
       location.path("/login");
     }
       var deffered = q.defer();
-      http.get(serverurl + "pais/operators").
+      http.get(serverurl + "pais/operators", {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 if (status == 200) {
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");
@@ -1257,10 +1945,15 @@ var ServerService = angular.module('ServerService', [])
       location.path("/login");
     }
       var deffered = q.defer();
-      http.get(serverurl + "pais/operators?company_id=" + company_id).
+      http.get(serverurl + "pais/operators?company_id=" + company_id, {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 if (status == 200) {
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");
@@ -1281,10 +1974,15 @@ var ServerService = angular.module('ServerService', [])
       location.path("/login");
     }
       var deffered = q.defer();
-      http.get(serverurl + "pais/operators/" + id).
+      http.get(serverurl + "pais/operators/" + id, {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 if (status == 200) {
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");
@@ -1305,10 +2003,15 @@ var ServerService = angular.module('ServerService', [])
       location.path("/login");
     }
       var deffered = q.defer();
-      http.post(serverurl + "pais/operators", operator).
+      http.post(serverurl + "pais/operators", operator, {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 if (status == 200) {
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");
@@ -1329,10 +2032,15 @@ var ServerService = angular.module('ServerService', [])
       location.path("/login");
     }
       var deffered = q.defer();
-      http.delete(serverurl + "pais/operators/" + id).
+      http.delete(serverurl + "pais/operators/" + id, {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 if (status == 200) {
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");
@@ -1353,10 +2061,15 @@ var ServerService = angular.module('ServerService', [])
       location.path("/login");
     }
       var deffered = q.defer();
-      http.put(serverurl + "pais/operators", operator).
+      http.put(serverurl + "pais/operators", operator, {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 if (status == 200) {
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");
@@ -1380,10 +2093,15 @@ var ServerService = angular.module('ServerService', [])
       location.path("/login");
     }
       var deffered = q.defer();
-      http.get(serverurl + "pais/currencies").
+      http.get(serverurl + "pais/currencies", {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 if (status == 200) {
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");
@@ -1403,10 +2121,15 @@ var ServerService = angular.module('ServerService', [])
       location.path("/login");
     }
       var deffered = q.defer();
-      http.post(serverurl + "pais/currencies", curr).
+      http.post(serverurl + "pais/currencies", curr, {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 if (status == 200) {
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");
@@ -1426,10 +2149,15 @@ var ServerService = angular.module('ServerService', [])
       location.path("/login");
     }
       var deffered = q.defer();
-      http.delete(serverurl + "pais/currencies/" + id).
+      http.delete(serverurl + "pais/currencies/" + id, {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 if (status == 200) {
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");
@@ -1450,10 +2178,15 @@ var ServerService = angular.module('ServerService', [])
       location.path("/login");
     }
       var deffered = q.defer();
-      http.get(serverurl + "pais/administrators").
+      http.get(serverurl + "pais/administrators", {
+        headers: {'X-Auth-Token': userLS.token}
+       }).
               success(function(data, status) {
                 if (status == 200) {
                     deffered.resolve(data);
+                } else if (status == 401) {
+                   clearUserInStorage();
+                   location.path('/login?status=expired');
                 } else {
                    console.log("Status not OK " + status);
                    deffered.reject("Error");

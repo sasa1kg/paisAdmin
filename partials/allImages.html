@@ -1,0 +1,61 @@
+ <div id="wrapper">
+
+        <div ng-include="'partials/navigation.html'">
+        </div>
+
+        <div id="page-wrapper">
+
+            <div class="container-fluid">
+
+                <!-- Page Heading -->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h1 class="page-header">
+                            All images <a class="btn btn-primary pull-right" href="#/orderDetailed/{{order_id}}/{{client_id}}"><span class="glyphicon glyphicon-triangle-left"></span> Back to order</a>
+                        </h1>
+                    </div>
+                </div>
+                <!-- /.row -->
+
+                  <div class="row">
+                    <div class="col-lg-12">
+                    		<table class="table table-bordered table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                            <th><strong>Name</strong></th>
+                                                            <th><strong>Type</strong></th>
+                                                            <th><strong>Date</strong></th>
+                                                            <th><strong>Size [MB]</strong></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr ng-repeat="image in selectedDetailedImageResults" ng-class="{'warning' : image.image_type == 2, 'success' : image.image_type == 3, 'info' : image.image_type < 2}">
+                                                            <td>
+                                                                <div><a class="cursorchg" href='#/recording/{{client_id}}/{{order_id}}/{{image.image_id}}/{{image.polygon_id}}/'><strong>{{image.document_name}}</strong></a>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <p ng-show="image.image_type < 2">Regular dron image</p>
+                                                                <p ng-show="image.image_type == 2">Downgraded large image</p>
+                                                                <p ng-show="image.image_type == 3">Partial (Tile) image</p>
+                                                            </td>
+                                                            <td>{{image.document_created_at}}</td>
+                                                            <td>{{roundFileSize(image.document_size)}}</td>
+                                                        </tr>
+                                                    </tbody>
+                             </table>
+                        
+                    </div>
+                </div>
+                <!-- /.row -->
+
+             
+
+            </div>
+            <!-- /.container-fluid -->
+
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->

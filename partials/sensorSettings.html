@@ -36,10 +36,10 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" ng-click="saveChanges()">
-                        Save changes
+                        <span class="glyphicon glyphicon-floppy-disk"></span> Save changes
                     </button>
                     <button type="button" class="btn btn-danger" ng-click="removeUOM()">
-                        Delete UOM
+                        <span class="glyphicon glyphicon-remove"></span> Delete UOM
                     </button>
                     <button type="button" class="btn btn-default pull-right" ng-click="dismissModal()">Cancel</button>
                 </div>
@@ -61,40 +61,25 @@
                         <h2>Sensors</h2>
                             <div class="alert alert-success" ng-show="!save && save_success">
                                 <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                                <strong>{{selected.username}}</strong> Changes saved
+                                <strong>{{selected.email}}</strong> Changes saved
                             </div>
                         <div class="table-responsive">
                             <div class="col-lg-6">
                             <div class="panel panel-default">
                             	<div class="panel-heading">
-                                        <h5>Add new sensor <span class="pull-right cursorchg" ng-click="toggleAddPanel()">Toggle</span><h5>
+                                        <h5><span class="glyphicon glyphicon-object-align-bottom"></span> Add new sensor <span class="pull-right cursorchg" ng-click="toggleAddPanel()"><span class="glyphicon glyphicon-chevron-up" ng-show="addPanelShow"></span><span class="glyphicon glyphicon-chevron-down" ng-show="!addPanelShow"></span> Toggle</span><h5>
                                 </div>
                                 <div class="panel-body" ng-show="addPanelShow">
                                 	<p>Name</p>
                                     <input class="form-control pulltop" ng-model="newType.name">
                                     <p>Description</p>
                                     <input class="form-control pulltop" ng-model="newType.description">
-                                    <!--<p>UOMs</p>
-                                    <div class="input-group pulltop">
-                                        <select class="form-control" ng-model="uomToAdd">
-                                             <option ng-selected="{{uom.id == uomToAdd}}"
-                                                ng-repeat="uom in availableUOMs"
-                                                value="{{uom.id}}">
-                                                <b>{{uom.name}}</b> [{{uom.level}} {{uom.symbol}} | {{uom.quantity}}]
-                                             </option>
-                                        </select>
-                                        <span class="input-group-addon cursorchg" id="basic-addon2" ng-click="addUOM()">Add UOM</span>
-                                    </div>
-                                    <ul>
-                                    	<li ng-repeat="addedUOM in newType.uoms"><span class="glyphicon glyphicon-remove-sign cursorchg" ng-click="removeUOM(addedUOM.id)"></span> {{addedUOM.name}}</li>
-                                    </ul>
-                                    -->
-                                    <button class="btn btn-primary pulltop" ng-click="addNewType()">Add new type</button>
+                                    <button class="btn btn-primary pulltop" ng-click="addNewType()"><span class="glyphicon glyphicon-object-align-bottom"></span> Add new type</button>
                                 </div>
                             </div>
                             <div class="panel panel-default">
                             	<div class="panel-heading">
-                                        <h5>Add new UOM <span class="pull-right cursorchg" ng-click="toggleUOMPanel()">Toggle</span><h5>
+                                        <h5><span class="glyphicon glyphicon-indent-left"></span> Add new UOM <span class="pull-right cursorchg" ng-click="toggleUOMPanel()"><span class="glyphicon glyphicon-chevron-up" ng-show="addUOMShow"></span><span class="glyphicon glyphicon-chevron-down" ng-show="!addUOMShow"></span> Toggle</span><h5>
                                 </div>
                                 <div class="panel-body" ng-show="addUOMShow">
                                 	<p>Name</p>
@@ -113,7 +98,7 @@
                                                 {{type.name}}
                                              </option>
                                         </select>
-                                    <button class="btn btn-primary pulltop" ng-click="addNewUOM()">Add new UOM</button>
+                                    <button class="btn btn-primary pulltop" ng-click="addNewUOM()"><span class="glyphicon glyphicon-indent-left"></span> Add new UOM</button>
                                 </div>
                             </div>
                             <hr>
@@ -129,7 +114,7 @@
                                     <tr ng-repeat="sensor in sensorTypes" ng-click="select(sensor.id)" ng-class="{'active' : isActive(sensor.id)}">
                                         <td><span class="glyphicon glyphicon-remove-sign cursorchg" ng-click="removeType(sensor.id)"></span> {{sensor.id}}</td>
                                         <td>{{sensor.name}}</td>
-                                        <td>{{sensor.uoms.length}}</td>
+                                        <td>{{sensor.uoms.length}} <span ng-show="sensor.id == selected.id" class="glyphicon glyphicon-chevron-right pull-right"></span></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -137,14 +122,14 @@
                         <div class="col-lg-6">
                             <div class="panel panel-default">
                                     <div class="panel-heading">
-                                        <h5>Details | {{selected.name}}<h5>
+                                        <h5><span class="glyphicon glyphicon-th-list"></span>  Details | {{selected.name}}<h5>
                                     </div>
                                     <div class="panel-body">
                                     	<p>Name</p>
                                         <input class="form-control pulltop" ng-model="selected.name">
                                         <p>Description</p>
                                         <input class="form-control pulltop" ng-model="selected.description">
-                                        <button class="btn btn-primary pull-right pulltop" ng-click="saveChangesType()">Save changes</button>
+                                        <button class="btn btn-primary pull-right pulltop" ng-click="saveChangesType()"><span class="glyphicon glyphicon-floppy-disk"></span> Save changes</button>
                                         </br>
                                         <p class="pulltop">UOMs</p>
                                         <table class="table table-bordered table-hover">

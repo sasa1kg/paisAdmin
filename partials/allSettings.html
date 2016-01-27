@@ -26,7 +26,7 @@
                             </div>
                         <div class="table-responsive">
                             <div class="col-lg-6">
-                            <h3>Administrators</h3>
+                            <h3><span class="glyphicon glyphicon-eye-open"></span> Administrators</h3>
                             <hr>
                             <table class="table table-bordered table-hover">
                                 <thead>
@@ -46,7 +46,7 @@
                                     </tr>
                                 </tbody>
                             </table>
-                            <h3>Currencies</h3>
+                            <h3><span class="glyphicon glyphicon-euro"></span> Currencies</h3>
                             <hr>
                             <table class="table table-bordered table-hover">
                                 <thead>
@@ -62,7 +62,7 @@
                                         <td>{{curr.id}}</td>
                                         <td>{{curr.name}}</td>
                                         <td>[{{curr.country_id}}] {{curr.country_name}}</td>
-                                        <td><span class="glyphicon glyphicon-remove-sign cursorchg" ng-click="removeCurrency(curr.id)"> Delete</span></td>
+                                        <td><span class="glyphicon glyphicon-remove-sign cursorchg" ng-click="deleteCurrency(curr.id)"> Delete</span></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -85,7 +85,7 @@
                                              </option>
                                         </select>
 	                                    
-	                                    <button class="btn btn-primary pulltop" ng-click="addCurrency()">Add new currency</button>
+	                                    <button class="btn btn-primary pulltop" ng-click="addCurrency()"><span class="glyphicon glyphicon-usd"></span> Add new currency</button>
 	                                </div>
 	                           		</div>
                         	

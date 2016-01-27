@@ -1,39 +1,301 @@
  <div id="wrapper">
 
-        <div ng-include="'partials/navigation.html'">
-        </div>
+    <div ng-include="'partials/navigation.html'">
+    </div>
 
-        <div id="page-wrapper">
+       <!-- Modal -->
+    <script type="text/ng-template" id="additionalFilter.html">
+        <div>
 
-            <div class="container-fluid">
+            <!-- Modal content-->
+            <div>
+                <div class="modal-header">
+                    <button type="button" class="close" ng-click="dismissModal()">&times;</button>
+                    <h4 class="modal-title">Additional Filter</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="panel panel-default">
+                                    <div class="panel-heading col-sm-12">
+                                            <a class="btn btn-success col-sm-5" ng-click="toogleAllClients(true)">Search All</a>
+                                            <a class="btn btn-warning col-sm-offset-2 col-sm-5" ng-click="toogleAllClients(false)">Filter by client</a>
+                                    </div>
+                                    <div class="panel-body margin panelDateBody reportPanel" ng-show="!searchObject.all">
+                                        <div class="alert alert-info" ng-show="loadingClients">
+                                            Loading clients...
+                                        </div>
+                                        <div ng-show="!loadingClients">
+                                           <p>Filter by client:</p>
+                                           <select class="form-control pulltop" ng-model="searchObject.client_id">
+                                                                     <option ng-selected="{{searchObject.client_id == user.id}}"
+                                                                        ng-repeat="user in users"
+                                                                        value="{{user.id}}">
+                                                                        {{user.first_name}} {{user.last_name}} [{{user.user_name}}]
+                                                                     </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="panel-body margin panelDateBody reportPanel" ng-show="searchObject.all">
+                                    <div class="alert alert-success">
+                                      <strong>Search all clients</strong>
+                                    </div>
 
-                <!-- Page Heading -->
-                <div class="row">
-                    <div class="col-lg-12">
-                        <h1 class="page-header">
-                            Reports <small></small>
-                        </h1>
+                                    </div>
                     </div>
                 </div>
-                <!-- /.row -->
-
-                  <div class="row">
-                    <div class="col-lg-12">
-                        
-                        <div class="table-responsive">
-                           
-                        </div>
-                    </div>
+                <div class="modal-footer">
+                    <a type="button" class="btn btn-primary" ng-click="filter()"><span class="glyphicon glyphicon glyphicon-paperclip"></span> Create report</a>
+                    <a type="button" class="btn btn-danger" ng-click="dismissModal()"><span class="glyphicon glyphicon-remove"></span> Cancel</a>
                 </div>
-                <!-- /.row -->
-
-             
-
             </div>
-            <!-- /.container-fluid -->
 
         </div>
-        <!-- /#page-wrapper -->
+    </script>
+
+
+    <script type="text/ng-template" id="stationStatsModal.html">
+        <div>
+
+            <!-- Modal content-->
+            <div>
+                <div class="modal-header">
+                    <button type="button" class="close" ng-click="dismissModal()">&times;</button>
+                    <h4 class="modal-title">Sensor Station {{id.station_id}} stats</h4>
+                </div>
+                <div class="modal-body">
+                    <div>
+                           <h4 ng-show="dateObj.allTime">All-time stats</h4> 
+                           <h4 ng-show="!dateObj.allTime">From <strong>{{dateObj.dateFrom}}</strong></h4> 
+                           <h4 ng-show="!dateObj.allTime">To <strong>{{dateObj.dateTo}}</strong></h4>
+                           <hr>
+                           <div class="alert alert-info" ng-show="loading">
+                              Loading report data...
+                            </div>
+                            <div class="google-map-canvas" id="map-canvas-results-small"></div>
+                            <div ng-show="!loading" class="pulltop30">
+                                <table class="table table-bordered table-hover">
+                                    <thead>
+                                        <th>Type</th>
+                                        <th>Active from</th>
+                                        <th>Min Value</th>
+                                        <th>Max Value</th>
+                                        <th>Avg Value</th>
+                                        <th>Std Value</th>
+                                        <th>Measurements</th>
+                                        <th ng-if="!dateObj.allTime">Approx. Measurements/Hour</th>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="sensor in stationStats">
+                                            <td>{{sensor.sensor_type_name}}</td>
+                                            <td>
+                                                <div ng-show="sensor.active == 1">
+                                                    <div class="badge activeBadge">{{sensor.sensor_activated_at}}</div>
+                                                </div>
+                                                <div ng-show="sensor.active == 0">
+                                                    <div class="badge notActiveBadge">Not active</div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div ng-show="sensor.active == 1">
+                                                    <p>{{sensor.min_value}} {{sensor.uom_symbol}}</p>
+                                                </div>
+                                                <div ng-show="sensor.active == 0">
+                                                    <p>N/A</p>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div ng-show="sensor.active == 1">
+                                                    <p>{{sensor.max_value}} {{sensor.uom_symbol}}</p>
+                                                </div>
+                                                <div ng-show="sensor.active == 0">
+                                                    <p>N/A</p>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div ng-show="sensor.active == 1">
+                                                    <p>{{sensor.avg_value}} {{sensor.uom_symbol}}</p>
+                                                </div>
+                                                <div ng-show="sensor.active == 0">
+                                                    <p>N/A</p>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div ng-show="sensor.active == 1">
+                                                    <p>{{sensor.std_value}} {{sensor.uom_symbol}}</p>
+                                                </div>
+                                                <div ng-show="sensor.active == 0">
+                                                    <p>N/A</p>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div ng-show="sensor.active == 1">
+                                                    <p>{{sensor.measurements_number}}</p>
+                                                </div>
+                                                <div ng-show="sensor.active == 0">
+                                                    <p>N/A</p>
+                                                </div>
+                                            </td>
+                                            <td ng-if="!dateObj.allTime">
+                                                <div ng-show="sensor.active == 1">
+                                                    <p>{{roundMem(sensor.measurements_number/measurementHours)}}</p>
+                                                </div>
+                                                <div ng-show="sensor.active == 0">
+                                                    <p>N/A</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a type="button" class="btn btn-danger" ng-click="dismissModal()"><span class="glyphicon glyphicon-remove"></span> Cancel</a>
+                </div>
+            </div>
+
+        </div>
+    </script>
+
+
+
+    <div id="page-wrapper">
+
+        <div class="container-fluid">
+
+            <!-- Page Heading -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">
+                        Reports <small></small>
+                    </h1>
+                </div>
+            </div>
+            <!-- /.row -->
+
+            <div class="row">
+                <div class="col-lg-12">
+                        <div class="col-sm-12">
+                            <div class="panel panel-default panelSmallBorderTop">
+                                <div class="panel-heading panelSmallTop">
+                                    <h5>Create report</h5>
+                                </div>
+                                <div class="panel-body margin panelDateBody">
+                            <div class="col-sm-3">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading col-sm-12">
+                                            <a class="btn btn-primary col-sm-5" ng-click="toggleFilter(0)">Time filter</a>
+                                            <a class="btn btn-info col-sm-offset-2 col-sm-5" ng-click="toggleFilter(1)">All time</a>
+                                    </div>
+                                    <div class="panel-body margin panelDateBody reportPanel" ng-show="!allTimeFilter">
+                                        <p>From: </p>
+                                        <div class="form-group row">
+                                            <div class="dropdown">
+                                                <a class="dropdown-toggle" id="dropdown2" role="button" data-toggle="dropdown">
+                                                <div class="input-group"><input type="text" class="form-control"
+                                                        data-ng-model="dateFrom | date:'dd.MM.yyyy'">
+                                                        <span
+                                                        class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i>
+                                                    </span>
+                                                </div>
+                                                </a>
+                                                <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                                                    <datetimepicker data-ng-model="dateFrom" 
+                                                    data-on-set-time="onTimeSetFrom(newDate, oldDate)"
+                                                    data-datetimepicker-config="{ minView:'day', dropdownSelector: '#dropdown2' }"/>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <p>To: </p>
+                                        <div class="form-group row">
+                                                <div class="dropdown">
+                                                    <a class="dropdown-toggle" id="dropdown3" role="button" data-toggle="dropdown">
+                                                        <div class="input-group"><input type="text" class="form-control"
+                                                            data-ng-model="dateTo | date:'dd.MM.yyyy'">
+                                                            <span
+                                                            class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i>
+                                                        </span>
+                                                    </div>
+                                                </a>
+                                                <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                                                    <datetimepicker data-ng-model="dateTo" 
+                                                    data-on-set-time="onTimeSetFrom(newDate, oldDate)"
+                                                    data-datetimepicker-config="{ minView:'day', dropdownSelector: '#dropdown3' }"/>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="panel-body margin panelDateBody reportPanel" ng-show="allTimeFilter">
+                                        <div class="alert alert-info">
+                                            Load all entries available
+                                        </div>
+                                    </div>
+                                </div>
+                        </div>
+                        <div class="col-sm-3 col-sm-offset-2">
+                            <a class="btn btn-primary full-btn" ng-click="additionalTransactions()"><span class="glyphicon glyphicon-bookmark"></span> Generate transaction report</a>
+                            <a class="btn btn-success full-btn" ng-click="additionalSensors()"><span class="glyphicon glyphicon-signal"></span> Generate sensor report</a>
+                            <a class="btn btn-info full-btn" ng-click="additionalClientPayedOrders()"><span class="glyphicon glyphicon-user"></span> Generate clients payed orders report</a>
+                        </div>
+                        </div>
+                        </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="alert alert-info" ng-show="loading">
+                              <strong>Loading...</strong>
+                            </div>
+                            <div ng-show="!loading">
+                            <h3>{{reportName}}</h3>
+                            <table class="table table-bordered table-hover" id="table3">
+                                <thead>
+                                    <tr>
+                                        <th ng-repeat="column in cols">{{column}} <a class="pull-right cursorchg" ng-show="key_links[0].column != undefined"><span class="glyphicon glyphicon-chevron-down"></span></a></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!--| orderBy : order -->
+                                    <tr ng-repeat="row in rows | orderBy : order">
+                                        <td ng-repeat="column in cols">
+                                            <p ng-show="row[column].type=='text'">{{row[column].data}}</p>
+                                            <a class="btn" ng-class="{'btn-primary' : type==0, 'btn-success' : type==1}" ng-show="row[column].type=='link'" href="{{row[column].data}}"><span class="glyphicon glyphicon-new-window"></span> {{row[column].desc}}</a>
+                                            <div ng-show="row[column].type=='badge'">
+                                                <div class="badge activeBadge" ng-show="{{row[column].data_0}}">{{row[column].data_1}}</div>
+                                                <div class="badge notActiveBadge" ng-hide="{{row[column].data_0}}">{{row[column].data_1}}</div>
+                                                </br>
+                                                <p>{{row[column].data_2}}</p>
+                                            </div>
+                                            <div ng-show="row[column].type=='multiline'">
+                                                <p>{{row[column].data}}</p>
+                                                </br>
+                                                <p>{{row[column].data2}}</p>
+                                            </div>
+                                            <div ng-show="row[column].type=='multi'">
+                                                <p class="sensorsCol">Total sensors: {{row[column].num}} <div class="badge activeBadge" ng-show="row[column].active > 0">Active sensors: {{row[column].active}}</div></p>
+                                                <hr ng-show="row[column].active > 0">
+                                                <a class="btn btn-success" ng-click="stationReport(row[column].id)" ng-show="row[column].active > 0"><span class="glyphicon glyphicon-align-left"></span> Show station report</a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div>
+                            <hr>
+                            <div id="additionalReport" class="col-sm-4 col-sm-offset-8" ng-show="type == 0 && availableCurrencies.length>0">
+                                <div class="separatorReport"></div>
+                                <div><strong>TOTAL:</strong></div>
+                                <div ng-repeat="cur in availableCurrencies">
+                                    <strong class="pull-right">{{cur.currency}} {{totalTransactions[cur.currency]}}</strong></br>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+            </div>
+            <!-- /.row -->
+
+        </div>
+        <!-- /.container-fluid -->
 
     </div>
+    <!-- /#page-wrapper -->
+
+</div>
     <!-- /#wrapper -->

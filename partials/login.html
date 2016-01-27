@@ -1,27 +1,28 @@
 <div class="container">
 
-<div class="col-lg-4 pulltop loginform">
-        <div class="insideloginform">
-            <div class="form-group">
-                <input type="text" class="form-control input-lg"  placeholder="Username" ng-model="username">
+    <div class="col-lg-4 pulltop loginform">
+            <div class="insideloginform">
+                <div>
+                    <a class="btn btn-default btn-lg submitbutton pull-right" role="button" href="http://www.agro-pais.com/login.php">Log in</a>
+                </div>
             </div>
-            <div class="form-group">
-                <input type="password" class="form-control input-lg" placeholder="Password" ng-model="password">
+            <div class="alert alert-danger pulltop30" ng-show="expired">
+                <strong>LOGIN</strong> Session expired.
             </div>
-            <div>
-                <a class="btn btn-default btn-lg submitbutton pull-right" role="button" ng-click="login()">Log in</a>
-              
-                  <!--<oauth
-                        site="http://oauth-ng-server.herokuapp.com."
-                        client-id="017b9f702a904869a6e52bd39b147bb912"
-                        redirect-uri="http://localhost/pais/#/newOrder"
-                        profile-uri="http://oauth-ng-server.herokuapp.com/api/v1/me"
-                        scope="public">
-                </oauth>  -->
-            </div>
+    <div>
+
+</div>
+</div>
+
+<div class="footer">
+    <div class="container contExt">
+        <div class="col-sm-4">
+        <img src="img/euc.svg" class="logoExt"></img>
+        <img src="img/acc.svg" class="logoExt"></img>
+        <img src="img/fractals_logo.png" class="logoExt"></img>
         </div>
-        <div class="alert alert-danger pulltop30" ng-show="loginFailed">
-            <strong>LOGIN</strong> Login failed. Check credentials and try again.
-        </div>
-<div>
+        <div class="col-sm-8">
+        <p><small>This project is funded by FRACTALS (Future Internet Enabled Agricultural Applications, FP7 project No. 632874), under the funding framework of the European Commission</small></p>
+    </div>
+    </div>
 </div>

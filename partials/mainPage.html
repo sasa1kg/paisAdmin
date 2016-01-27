@@ -33,9 +33,9 @@
                                     </div>
                                 </div>
                             </div>
-                            <a href="#/orders">
+                            <a href="#/orders/0/">
                                 <div class="panel-footer">
-                                    <span class="pull-left">Orders</span>
+                                    <span class="pull-left">Inactive Orders</span>
                                     <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
                                     <div class="clearfix"></div>
                                 </div>
@@ -55,9 +55,9 @@
                                     </div>
                                 </div>
                             </div>
-                            <a href="#/orders">
+                            <a href="#/orders/1/">
                                 <div class="panel-footer">
-                                    <span class="pull-left">Orders</span>
+                                    <span class="pull-left">Pending Orders</span>
                                     <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
                                     <div class="clearfix"></div>
                                 </div>
@@ -77,9 +77,31 @@
                                     </div>
                                 </div>
                             </div>
-                            <a href="#/orders">
+                            <a href="#/orders/2/">
                                 <div class="panel-footer">
-                                    <span class="pull-left">Orders</span>
+                                    <span class="pull-left">Active Orders</span>
+                                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                    <div class="clearfix"></div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4">
+                        <div class="panel panel-purple">
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <div class="col-xs-3">
+                                        <i class="fa fa-shopping-cart fa-5x"></i>
+                                    </div>
+                                    <div class="col-xs-9 text-right">
+                                        <div class="huge">{{finishedOrders.count}}</div>
+                                        <div>Finished orders</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="#/orders/4/">
+                                <div class="panel-footer">
+                                    <span class="pull-left">Finished Orders</span>
                                     <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
                                     <div class="clearfix"></div>
                                 </div>
@@ -155,11 +177,16 @@
                     <div class="col-lg-6">
                         <div class="panel panel-default">
                             <div class="panel-heading">
-                                <h3 class="panel-title"><i class="fa fa-money fa-fw"></i> Reports</h3>
+                                <h3 class="panel-title"><i class="fa fa-money fa-fw"></i> Transactions in the last 7 days</h3>
                             </div>
                             <div class="panel-body">
                                 <div class="table-responsive">
-                                    
+                                <div class="list-group">
+                                    <a ng-repeat="trans in transactions" class="list-group-item">
+                                        <span class="badge">{{trans.order_payment_date}}</span>
+                                        <i class="fa fa-eur"></i></i> {{trans.client_first_name}} {{trans.client_last_name}} | {{trans.order_value}} {{trans.currency_id}} 
+                                    </a>
+                                </div>
                                 </div>
                                 <div class="text-right">
                                     <a href="#/reports">All reports <i class="fa fa-arrow-circle-right"></i></a>

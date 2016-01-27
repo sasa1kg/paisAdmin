@@ -1,17 +1,15 @@
 angular.module('adminApp').controller("newUserCtrl", ["$scope", "$http", "$filter", "ServerService",  
 	function (scope, http, filter, ServerService) {
 
-	
-	scope.adminName = "Pais admin";
 
 
     scope.selected = {
       "first_name" : "",
       "last_name" : "",
-      "username" : "",
       "password" : "",
       "phone" : "",
-      "email" : ""
+      "email" : "",
+      "user_name" : ""
     };
     scope.selectedActive = false;
 
@@ -45,12 +43,12 @@ angular.module('adminApp').controller("newUserCtrl", ["$scope", "$http", "$filte
         alert("Please enter users first name.");
         return;
       }
-      if (scope.selected.last_name.length < 1) {
-        alert("Please enter users last name.");
+      if (scope.selected.user_name.length < 1) {
+        alert("Please enter username.");
         return;
       }
-      if (scope.selected.username.length < 1) {
-        alert("Please enter users username.");
+      if (scope.selected.last_name.length < 1) {
+        alert("Please enter users last name.");
         return;
       }
       if (scope.selected.password.length < 1) {
@@ -75,7 +73,7 @@ angular.module('adminApp').controller("newUserCtrl", ["$scope", "$http", "$filte
                         if (data) {
                            scope.countries = data;
                            scope.register = false;
-    					   scope.reg_success = true;
+    					             scope.reg_success = true;
                         } else {
                            scope.generalError = true;
                         }

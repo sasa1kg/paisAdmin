@@ -36,9 +36,33 @@ angular.module("adminApp").config(['$routeProvider', function(routeProvider) {
 		resolve: {
 		}
 	})
+	.when("/orders/:filter_id/", {
+		templateUrl: "partials/orders.html",
+		controller: "ordersCtrl",
+		resolve: {
+		}
+	})
 	.when("/orderDetailed/:id/:user_id/", {
 		templateUrl: "partials/orderDetailed.html",
 		controller: "orderDetailedCtrl",
+		resolve: {
+		}
+	})
+	.when("/sensorMap/:order_id/:user_id/", {
+		templateUrl: "partials/sensorsMap.html",
+		controller: "sensorsMapCtrl",
+		resolve: {
+		}
+	})
+	.when("/territoryMap/:order_id/:user_id/", {
+		templateUrl: "partials/polygonsMap.html",
+		controller: "polygonsMapCtrl",
+		resolve: {
+		}
+	})
+	.when("/recording/:client_id/:order_id/:id/:polygon_id/", {
+		templateUrl: "partials/recording.html",
+		controller: "recordingCtrl",
 		resolve: {
 		}
 	})
@@ -90,15 +114,39 @@ angular.module("adminApp").config(['$routeProvider', function(routeProvider) {
 		resolve: {
 		}
 	})
-	.when("/sensorReadings/:client_id/:order_id/:sensor_id/", {
-		templateUrl: "partials/sensorReadings.html",
-		controller: "sensorReadingsCtrl",
+	.when("/sensorReadings/:client_id/:order_id/:station_id/:sensor_id/", {
+		templateUrl: "partials/highSensorReadings.html",
+		controller: "highSensorReadingsCtrl",
 		resolve: {
 		}
 	})
 	.when("/reports", {
 		templateUrl: "partials/reports.html",
 		controller: "reportsCtrl",
+		resolve: {
+		}
+	})
+	.when("/newSensor/:client_id/:order_id/:sensor_id/", {
+		templateUrl: "partials/highSensorReadings.html",
+		controller: "highSensorReadingsCtrl",
+		resolve: {
+		}
+	})
+	.when("/kml/:client_id/:order_id/:kml_id/", {
+		templateUrl: "partials/kmlOnMap.html",
+		controller: "kmlMapCtrl",
+		resolve: {
+		}
+	})
+	.when("/allImages/:client_id/:order_id/", {
+		templateUrl: "partials/allImages.html",
+		controller: "allImagesCtrl",
+		resolve: {
+		}
+	})
+	.when("/redirection", {
+		templateUrl: "partials/redirection.html",
+		controller: "redirectionCtrl",
 		resolve: {
 		}
 	})

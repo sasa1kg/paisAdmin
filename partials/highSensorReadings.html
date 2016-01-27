@@ -1,0 +1,240 @@
+ <div id="wrapper">
+
+ 	<div ng-include="'partials/navigation.html'">
+ 	</div>
+
+ 	<div id="page-wrapper">
+
+ 	<!-- Modal -->
+	<script type="text/ng-template" id="sensorStats.html">
+	<div>
+
+	<!-- Modal content-->
+	<div>
+	<div class="modal-header">
+	<button type="button" class="close" ng-click="dismissModal()">&times;</button>
+	<h4 class="modal-title">Statistics</h4>
+	</div>
+	<div class="modal-body">
+	<div class="alert alert-success" ng-style="{'color': selectedSensor.selectedSensor.color, 'background-color' : selectedSensor.selectedSensor.color, 'border-color' : selectedSensor.selectedSensor.color, 'opacity' : 0.7}" role="alert">
+		<p class="descText">All-time statistics</p>
+	</div>
+
+	<div>
+		<div class="statsCard" ng-style="{'color': selectedSensor.selectedSensor.color, 'opacity' : 0.7}">
+			<div class="col-lg-6 text-center">
+				<i class="fa fa-arrows-h statsCardIcon"></i>
+				<p class="statsCardTextSmall">Avg value</p>
+			</div>
+			<div class="col-lg-6 text-center vcenter">
+				<p class="statsCardText">{{roundDoubleTwo(stats.avg_value)}} {{uom}}</p>
+			</div>
+		</div>
+		<div class="statsCard" ng-style="{'color': selectedSensor.selectedSensor.color, 'opacity' : 0.7}">
+			<div class="col-lg-6 text-center">
+				<i class="fa fa-arrow-up statsCardIcon"></i>
+				<p class="statsCardTextSmall">Maximum</p>
+			</div>
+			<div class="col-lg-6 text-center vcenter">
+				<p class="statsCardText">{{roundDoubleTwo(stats.max_value)}} {{uom}}</p>
+			</div>
+		</div>
+		<div class="statsCard" ng-style="{'color': selectedSensor.selectedSensor.color, 'opacity' : 0.7}">
+			<div class="col-lg-6 text-center">
+				<i class="fa fa-arrow-down statsCardIcon"></i>
+				<p class="statsCardTextSmall">Minimum</p>
+			</div>
+			<div class="col-lg-6 text-center vcenter">
+				<p class="statsCardText">{{roundDoubleTwo(stats.min_value)}} {{uom}}</p>
+			</div>
+		</div>
+		<div class="statsCard" ng-style="{'color': selectedSensor.selectedSensor.color, 'opacity' : 0.7}">
+			<div class="col-lg-6 text-center">
+				<i class="fa fa-line-chart statsCardIcon"></i>
+				<p class="statsCardTextSmall">Std value</p>
+			</div>
+			<div class="col-lg-6 text-center vcenter">
+				<p class="statsCardText">{{roundDoubleTwo(stats.std_value)}}</p>
+			</div>
+		</div>
+	</div>
+
+	</div>
+	<div class="modal-footer">
+	<a type="button" class="btn btn-danger" ng-click="saveSelection()"><span class="glyphicon glyphicon-remove"></span> Cancel</a>
+	</div>
+	</div>
+
+	</div>
+	</script>
+
+ 		<div class="container-fluid">
+
+ 			<!-- Page Heading -->
+ 			<div class="row">
+ 				<div class="col-lg-12">
+ 					<h1 class="page-header">
+ 						Sensor <small>Readings</small><a class="btn btn-success pull-right" ng-click="allTimeStats()"><span class="glyphicon glyphicon-signal"></span> Show all-time stats</a> 
+ 					</h1>
+ 				</div>
+ 			</div>
+ 			<!-- /.row -->
+
+ 			<div class="row">
+ 				<div class="col-lg-12">
+ 					<div class="col-sm-6">
+ 						<div class="panel panel-default panelSmallBorderTop">
+ 							<div class="panel-heading panelSmallTop">
+ 								<h5>Sensor id : {{sensorId}} from station {{stationId}} | {{sensorType.sensor_type_name}}</h5>
+ 							</div>
+ 							<div class="panel-body">
+ 								{{sensor.description}}
+ 							</div>
+ 						</div>
+ 						<div class="panel panel-default panelSmallBorderTop" ng-show="sensor.min_value != null || sensor.max_value != null">
+ 							<div class="panel-heading panelSmallTop">
+ 								<h5>Alarm Values</h5>
+ 							</div>
+ 							<div class="panel-body">
+ 								<div class="input-group pulltop10" ng-show="sensor.min_value != null">
+			                      <span class="input-group-addon" id="basic-addon1"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></span>
+			                      <input type="number" ng-disabled="true" class="form-control" placeholder="Alarm minimum" aria-describedby="basic-addon1" ng-model="sensor.min_value">
+			                      <span class="input-group-addon">{{uom_symbol}}</span>
+			                    </div>
+			                    <div class="input-group pulltop10" ng-show="sensor.max_value != null">
+			                      <span class="input-group-addon" id="basic-addon1"><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></span>
+			                      <input type="number" ng-disabled="true" class="form-control" placeholder="Alarm maximum" aria-describedby="basic-addon1" ng-model="sensor.max_value">
+			                      <span class="input-group-addon">{{uom_symbol}}</span>
+			                    </div>
+ 							</div>
+ 						</div>
+ 					</div>
+ 					<div class="col-sm-6">
+ 						<div class="panel panel-default panelSmallBorderTop">
+ 							<div class="panel-heading panelSmallTop">
+ 								<h5>Time filter</h5>
+ 							</div>
+ 							<div class="panel-body margin panelDateBody">
+ 								<label class="labelwidth">From: </label>
+ 								<div class="form-group row">
+ 									<div class="dropdown">
+ 										<a class="dropdown-toggle" id="dropdown2" role="button" data-toggle="dropdown">
+ 											<div class="input-group"><input type="text" class="form-control"
+ 												data-ng-model="dateFrom | date:'dd.MM.yyyy HH:mm'">
+ 												<span
+ 												class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i>
+ 											</span>
+ 										</div>
+ 									</a>
+ 									<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+ 										<datetimepicker data-ng-model="dateFrom" 
+ 										data-on-set-time="onTimeSetFrom(newDate, oldDate)"
+ 										data-datetimepicker-config="{ dropdownSelector: '#dropdown2' }"/>
+ 									</ul>
+ 								</div>
+ 							</div>
+ 							<label class="labelwidth">To: </label>
+ 							<div class="form-group row">
+ 								<div class="dropdown">
+ 									<a class="dropdown-toggle" id="dropdown2" role="button" data-toggle="dropdown">
+ 										<div class="input-group"><input type="text" class="form-control"
+ 											data-ng-model="dateTo | date:'dd.MM.yyyy HH:mm'">
+ 											<span
+ 											class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i>
+ 										</span>
+ 									</div>
+ 								</a>
+ 								<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+ 									<datetimepicker data-ng-model="dateTo" 
+ 									data-on-set-time="onTimeSetFrom(newDate, oldDate)"
+ 									data-datetimepicker-config="{ dropdownSelector: '#dropdown2' }"/>
+ 								</ul>
+ 							</div>
+ 						</div>
+ 						<button class="btn btn-primary btn-lg full-btn" ng-click="filter()"><span class="glyphicon glyphicon-indent-right"></span> FILTER</button>
+ 					</div>
+ 				</div>
+ 			</div>
+
+
+ 			 <div class="col-lg-12">
+ 				<div class="panel panel-default panelSmallBorderTop">
+ 					<div class="panel-heading panelSmallTop">
+ 						<h5>Statistics for the choosen period <p class="pull-right">Number of measurements: {{data.data.length}}</p></h5>
+ 					</div>
+ 					<div class="panel-body" ng-show="!loading">
+ 						<div class="col-lg-3 ">
+ 							<div class="statsCard" ng-style="{'color': selectedSensor.selectedSensor.color, 'opacity' : 0.7}">
+ 								<div class="col-lg-6 text-center">
+ 									<i class="fa fa-arrows-h statsCardIcon"></i>
+ 									<p class="statsCardTextSmall">Avg value</p>
+ 								</div>
+ 								<div class="col-lg-6 text-center vcenter">
+ 									<p class="statsCardText">{{roundDoubleTwo(statistics.avg_value)}} {{uom_symbol}}</p>
+ 								</div>
+ 							</div>
+ 						</div>
+ 						<div class="col-lg-3 ">
+ 							<div class="statsCard" ng-style="{'color': selectedSensor.selectedSensor.color, 'opacity' : 0.7}">
+ 								<div class="col-lg-6 text-center">
+ 									<i class="fa fa-arrow-up statsCardIcon"></i>
+ 									<p class="statsCardTextSmall">Max value</p>
+ 								</div>
+ 								<div class="col-lg-6 text-center vcenter">
+ 									<p class="statsCardText">{{roundDoubleTwo(statistics.max_value)}} {{uom_symbol}}</p>
+ 								</div>
+ 							</div>
+ 						</div>
+ 						<div class="col-lg-3 ">
+ 							<div class="statsCard" ng-style="{'color': selectedSensor.selectedSensor.color, 'opacity' : 0.7}">
+ 								<div class="col-lg-6 text-center">
+ 									<i class="fa fa-arrow-down statsCardIcon"></i>
+ 									<p class="statsCardTextSmall">Min value</p>
+ 								</div>
+ 								<div class="col-lg-6 text-center vcenter">
+ 									<p class="statsCardText">{{roundDoubleTwo(statistics.min_value)}} {{uom_symbol}}</p>
+ 								</div>
+ 							</div>
+ 						</div>
+ 						 <div class="col-lg-3 ">
+ 							<div class="statsCard" ng-style="{'color': selectedSensor.selectedSensor.color, 'opacity' : 0.7}">
+ 								<div class="col-lg-6 text-center">
+ 									<i class="fa fa-sort-numeric-asc statsCardIcon"></i>
+ 									<p class="statsCardTextSmall">Std value</p>
+ 								</div>
+ 								<div class="col-lg-6 text-center vcenter">
+ 									<p class="statsCardText">{{roundDoubleTwo(statistics.std_value)}}</p>
+ 								</div>
+ 							</div>
+ 						</div>
+ 					</div>
+ 					<div class="panel-body" ng-show="loading">
+ 						<div class="alert alert-info" role="alert" ng-show="loading"><strong>Loading...</strong></div>
+ 					</div>
+ 				</div>
+ 			</div>
+
+
+ 			<div class="col-lg-12">
+ 				<div class="alert alert-info" role="alert" ng-show="loading"><strong>Loading...</strong></div>
+ 				<!--<nvd3 options="options" data="results" config="{refreshDataOnly: true}" ng-show="!loading"></nvd3> -->
+ 				<!--<div class="full">
+ 					<linechart data="dataNum" options="options" height="" width=""></linechart>
+ 				</div>-->
+ 				<div id="containerhc" class="containerhc"></div>
+ 			</div>
+ 		</div>      
+ 	</div>
+
+ 	<!-- /.row -->
+
+
+
+ </div>
+ <!-- /.container-fluid -->
+
+</div>
+<!-- /#page-wrapper -->
+
+</div>
+    <!-- /#wrapper -->

@@ -21,7 +21,7 @@
                     <div class="col-lg-12">
                             <div class="alert alert-success" ng-show="!register && reg_success">
                                 <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                                <strong>{{selected.username}}</strong> User created
+                                <strong>{{selected.email}}</strong> User created
                             </div>
                         <div class="col-lg-6">
                             <div class="panel panel-default">
@@ -32,11 +32,10 @@
                                           </span>
                                           <input type="text" class="form-control" ng-disabled="true" placeholder="Account active">
                                         </div>
-
-                                        <p>Username</p>
-                                        <input class="form-control pulltop" ng-model="selected.username">
                                         <p>E-mail</p>
-                                        <input class="form-control pulltop" ng-model="selected.email">
+                                        <input class="form-control pulltop" ng-model="selected.email" ng-disabled="true">
+                                        <p>Username</p>
+                                        <input class="form-control pulltop" ng-model="selected.user_name" ng-disabled="true">
                                         <p>Password</p>
                                         <input class="form-control pulltop" ng-model="selected.password">
                                         <p>First name</p>

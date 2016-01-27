@@ -5,14 +5,65 @@
 
         <div id="page-wrapper">
 
+                <script type="text/ng-template" id="finishOrder.html">
+                <div>
+
+                    <!-- Modal content-->
+                    <div>
+                        <div class="modal-header">
+                            <button type="button" class="close" ng-click="dismissModal()">&times;</button>
+                            <h4 class="modal-title">Finish order</h4>
+                        </div>
+                        <div class="modal-body">
+                            <p>Are you sure you want to finish order {{scope.orderName}}?</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" ng-click="finishOrder()">
+                                <span class="btn btn-warning"></span> Finish order
+                            </button>
+                            <button type="button" class="btn btn-default pull-right" ng-click="dismissModal()">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </script>
+
+            <script type="text/ng-template" id="cancelOrder.html">
+                <div>
+
+                    <!-- Modal content-->
+                    <div>
+                        <div class="modal-header">
+                            <button type="button" class="close" ng-click="dismissModal()">&times;</button>
+                            <h4 class="modal-title">Cancel order</h4>
+                        </div>
+                        <div class="modal-body">
+                            <p>Are you sure you want to cancel order {{scope.orderName}}?</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" ng-click="cancelOrder()">
+                                <span class="glyphicon glyphicon-remove"></span> Cancel order
+                            </button>
+                            <button type="button" class="btn btn-default pull-right" ng-click="dismissModal()">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </script>
+
             <div class="container-fluid">
 
                 <!-- Page Heading -->
                 <div class="row">
                     <div class="col-lg-12">
                         <h1 class="page-header">
-                            Order <small>Single order details <a class="btn btn-primary pull-right" href="#/orders">All orders</a><a class="btn btn-primary pull-right btn-margin-right" href="#/users">All Clients</a></small>
+                            Order <small>Single order details 
+                            <a ng-show="selectedDetailed.polygons.length > 0" href="#/territoryMap/{{param_order_id}}/{{param_user_id}}/" class="btn btn-primary pull-right"><span class="glyphicon glyphicon-globe "></span> Show territories on map</a>
+                            <a ng-show="selectedDetailed.stations.length > 0" href="#/sensorMap/{{param_order_id}}/{{param_user_id}}/" class="btn btn-primary pull-right btn-margin-right"><span class="glyphicon glyphicon-globe"></span> Show stations on map</a>
+                            <a class="btn btn-primary pull-right btn-margin-right" href="#/orders"><span class="glyphicon glyphicon-th"></span> All orders</a>
+                            <a class="btn btn-primary pull-right btn-margin-right" href="#/users"><span class="glyphicon glyphicon-user"></span> All Clients</a></small>
                         </h1>  
+                        <h4>
+                            <small></small>
+                        </h4>
                     </div>
                 </div>
                 <!-- /.row -->
@@ -54,7 +105,6 @@
                                                 <h5>Ordered By: {{selectedDetailedUser.first_name}} {{selectedDetailedUser.last_name}}<h5>
                                             </div>
                                             <div class="panel-body">
-                                                <p>Username: {{selectedDetailedUser.username}}</p>
                                                 <p>Email: {{selectedDetailedUser.email}}</p>
                                                 <p>Country: {{selectedDetailedUser.country_code}}</p>
                                                 <p>Phone: {{selectedDetailedUser.phone}}</p>
@@ -84,27 +134,24 @@
                                                 </table>
                                             </div>
                                         </div>
-                                        <h4 ng-if="selectedDetailed.sensors.length>0">Sensors</h4>
-                                        <div class="panel panel-default panelSmallBorderSen" ng-repeat="sen in selectedDetailed.sensors">
+                                        <h4 ng-if="selectedDetailed.stations.length>0">Sensor Stations</h4>
+                                        <div class="panel panel-default panelSmallBorderSen" ng-repeat="station in selectedDetailed.stations">
                                             <div class="panel-heading panelSmallSen">
-                                                <h5>Sensor {{sen.sensor_id}}<h5>
+                                                <h5>Station {{station.station_id}}<h5>
                                             </div>
                                             <div class="panel-body">
-                                                <p>Description/Additional remarks: {{sen.description}}</p>
-                                                <p>Type: {{getSensorTypeName(sen.type_id)}}</p>
-                                                <p>UOM: {{getUOMName(sen.uom_id)}}</p>
-                                                <span class="badge activeBadge" ng-show="sen.active==1">Active</span><span class="badge notActiveBadge" ng-show="sen.active==0">Not active</span>
-                                                <table class="table table-bordered table-hover">
+                                                <p>Description/Additional remarks: {{station.station_description}}</p>
+                                                <table class="table table-responsive table-bordered table-hover">
                                                     <thead>
                                                         <tr>
-                                                            <th>Latitude</th>
-                                                            <th>Longitude</th>
+                                                            <th>Sensor Type</th>
+                                                            <th>UOM</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr>
-                                                            <td>{{sen.latitude}}</td>
-                                                            <td>{{sen.longitude}}</td>
+                                                        <tr ng-repeat="sen in station.sensors">
+                                                            <td>{{getSensorTypeName(sen.type_id)}} <span class="badge activeBadge" ng-show="sen.active==1">Active</span><span class="badge notActiveBadge" ng-show="sen.active==0">Not active</span></td>
+                                                            <td>{{getUOMName(sen.uom_id)}}</td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -121,10 +168,24 @@
                                             <h4>Status<h4>
                                         </div>
                                         <div class="panel-body">
-                                            <p><span class="badge notActiveBadge" ng-show="selectedDetailed.status == 0"> Inactive</span></p>
-                                            <p><span class="badge" ng-show="selectedDetailed.status == 1"> Pending (Invoice sent)</span></p>
-                                            <p><span class="badge activeBadge" ng-show="selectedDetailed.status == 2"> Active</span></p>
-                                            <a class="cursorchg" ng-show="selectedDetailed.status == 1" ng-click="showInvoice()"><span class="glyphicon glyphicon-usd"></span> Show sent invoice</a>
+                                            <div class="alert alert-danger" ng-show="selectedDetailed.status == 0">
+                                                <strong>Order inactive</strong> 
+                                            </div>
+                                            <div class="alert alert-success" ng-show="selectedDetailed.status == 2">
+                                                <strong>Order active</strong> 
+                                                <a class="btn btn-danger pull-right btnInAlert" ng-click="finishOrder(selectedDetailed.order_id)"> Finish order</a>
+                                            </div>
+                                            <div class="alert alert-warning" ng-show="selectedDetailed.status == 1">
+                                                <strong>Pending (invoice sent)</strong> 
+                                                <a class="cursorchg" ng-click="showInvoice()"><span class="glyphicon glyphicon-usd"></span> Show sent invoice</a> 
+                                                <a class="btn btn-info pull-right btnInAlert" ng-click="disableOrder(selectedDetailed.order_id)"> Cancel order</a>
+                                            </div>
+                                            <div class="alert finishedBadge" ng-show="selectedDetailed.status == 4">
+                                                <strong>Order finished</strong> 
+                                            </div>
+                                            <div class="alert canceledBadge" ng-show="selectedDetailed.status == 3">
+                                                <strong>Order canceled</strong> 
+                                            </div>
                                         </div>
                             </div>
                             <div class="panel panel-default panelSmallBorderTop">
@@ -134,7 +195,16 @@
                                     </div>
                                     <div class="panel-body" ng-show="selectedDetailed.status == 0">
                                         <p>Send invoice to user</p>
-                                        <button class="btn btn-primary" ngf-select="uploadFiles($files)">Select Invoice</button>
+                                        <button class="btn btn-primary" ng-disabled="sendingInvoice" ngf-select="uploadFiles($files)">
+                                            <div ng-show="!sendingInvoice">
+                                                <span class="glyphicon glyphicon-file">
+                                                </span> Select Invoice
+                                             </div>
+                                             <div ng-show="sendingInvoice">
+                                                <span class="glyphicon glyphicon-file">
+                                                </span> Sending Invoice...
+                                             </div>
+                                        </button>
                                         <table class="table table-striped table-hover">
                                         <thead>
                                         <tr>
@@ -171,7 +241,19 @@
                                             </div>
                                         </div>
                                         <p>Payment date</p>
-                                        <input class="form-control" type="date" ng-model="assignObject.order_payment_date">
+                                        <div class="dropdown">
+                                            <a class="dropdown-toggle" id="dropdown3" role="button" data-toggle="dropdown">
+                                                <div class="input-group"><input type="text" class="form-control" data-ng-model="assignObject.order_payment_date | date:'dd.MM.yyyy'">
+                                                    <span
+                                                        class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i>
+                                                    </span>
+                                                </div>
+                                            </a>
+                                            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                                                <datetimepicker data-ng-model="assignObject.order_payment_date" data-on-set-time="onTimePaymentSet(newDate, oldDate)"
+                                                                data-datetimepicker-config="{ minView:'day', dropdownSelector: '#dropdown3' }"/>
+                                            </ul>
+                                        </div>
                                         <p class="pulltop10">Assign order to operator company</p>
                                         <select class="form-control" ng-model="assignObject.operator_company_id">
                                              <option
@@ -180,7 +262,14 @@
                                                 {{company.name}}
                                              </option>
                                         </select>
-                                        <button class="btn btn-primary pulltop_btn" ng-click="assignOrder()">Assign</button>
+                                        <button class="btn btn-primary pulltop_btn" ng-disabled="assigning" ng-click="assignOrder()">
+                                            <div ng-show="!assigning">
+                                                <span class="glyphicon glyphicon-random"></span>  Assign
+                                            </div>
+                                            <div ng-show="assigning">
+                                                <span class="glyphicon glyphicon-random"></span>  Assigning...
+                                            </div>
+                                        </button>
                                     </div>
                                     <div class="panel-body" ng-show="selectedDetailed.status == 2">
                                         <div class="form-group row pulltop">
@@ -217,30 +306,84 @@
                                             <h4>Results<h4>
                                         </div>
                                         <div class="panel-body">
-                                            <p>Sensor Readings</p>
-                                            <table class="table table-bordered table-hover">
+                                            <p ng-show="selectedDetailed.stations.length > 0"><strong>Sensor Readings</strong> <a href="#/sensorMap/{{param_order_id}}/{{param_user_id}}/" class="pull-right cursorchg"><span class="glyphicon glyphicon-globe"></span> Show on map</a></p>
+                                            <div ng-repeat="station in selectedDetailed.stations">
+                                                <p>Sensor station {{station.station_id}}</p>
+                                                <table class="table table-responsive table-bordered table-hover">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Type</th>
+                                                                <th>Description</th>
+                                                                <th>Alarm Values</th>
+                                                                <th></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr ng-repeat="sen in station.sensors">
+                                                                <td>{{getSensorTypeName(sen.type_id)}} <small ng-show="sen.active==1">(Active from: {{sen.activate_at}})</small></td>
+                                                                <td>{{sen.description}}</td>
+                                                                <td>
+                                                                    <div ng-show="sen.min_value != null"><span class="glyphicon glyphicon-arrow-down"></span> {{roundDoubleTwo(sen.min_value)}} {{getUOMSymbol(sen.type_id, sen.uom_id)}}</br></div>
+                                                                    <div ng-show="sen.max_value != null"><span class="glyphicon glyphicon-arrow-up"></span> {{roundDoubleTwo(sen.max_value)}} {{getUOMSymbol(sen.type_id, sen.uom_id)}}</div>
+                                                                </td>
+                                                                <td>
+                                                                    <a class="cursorchg" href="#/sensorReadings/{{selectedDetailedUser.id}}/{{selectedDetailed.order_id}}/{{station.station_id}}/{{sen.sensor_id}}/" ng-show="sen.active==1"><span class="glyphicon glyphicon-equalizer"></span> Go to results</a>
+
+                                                                    <a ng-show="sen.active==0"><span class="glyphicon glyphicon-remove"></span> Not active</a>
+                                                                </td>
+
+                                                                
+                                                            </tr>
+                                                        </tbody>
+                                                </table>
+                                            </div>
+                                            <p ng-show="selectedDetailedImageResults.length > 0">Dron Images <a href="#/territoryMap/{{param_order_id}}/{{param_user_id}}/" class="pull-right cursorchg"><span class="glyphicon glyphicon-globe "></span> Show image links on map</a></p>
+                                            <a ng-show="totalImages>0" class="pull-right cursorchg" href="#/allImages/{{param_user_id}}/{{param_order_id}}/"><span class="glyphicon glyphicon-th-list"></span> Show all images [Total {{totalImages}}]</a>
+                                            <div class="imageResultsTable">
+                                            <table class="table table-bordered table-hover" ng-show="selectedDetailedImageResults.length > 0">
                                                     <thead>
                                                         <tr>
-                                                            <th>Type</th>
-                                                            <th>Description</th>
+                                                            <th>Name</th>
+                                                            <th>Date</th>
+                                                            <th>Size [MB]</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr ng-repeat="image in selectedDetailedImageResults">
+                                                            <td>
+                                                                <div ng-show="image.image_type != 2"><a class="cursorchg" href='#/recording/{{selectedDetailedUser.id}}/{{selectedDetailed.order_id}}/{{image.image_id}}/{{image.polygon_id}}/'>{{image.document_name}}</a>
+                                                                </div>
+                                                                <div ng-show="image.image_type == 2">{{cutLargeImageName(image.document_name)}} <div class="badge">LARGE IMAGE</div></div>
+                                                            </td>
+                                                            <td>{{image.document_created_at}}</td>
+                                                            <td>{{roundFileSize(image.document_size)}}</td>
+                                                        </tr>
+                                                    </tbody>
+                                            </table>
+                                        </div>
+                                        <p ng-show="selectedDetailedImageResults.length > 0">Recordings config file</p>
+                                            <div class="kmlResultTable">
+                                            <table class="table table-bordered table-hover" ng-show="selectedKMLs.length > 0">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Name</th>
+                                                            <th>Date</th>
+                                                            <th>Size [MB]</th>
+                                                            <th>Territory</th>
                                                             <th></th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr ng-repeat="sen in selectedDetailed.sensors">
-                                                            <td>{{getSensorTypeName(sen.type_id)}}</td>
-                                                            <td>{{sen.description}}</td>
-                                                            <td>
-                                                                <a class="cursorchg" href="#/sensorReadings/{{selectedDetailedUser.id}}/{{selectedDetailed.order_id}}/{{sen.sensor_id}}/" ng-show="sen.active==1"><span class="glyphicon glyphicon-equalizer"></span> Go to results</a>
-
-                                                                <a ng-show="sen.active==0"><span class="glyphicon glyphicon-remove"></span> Not active</a>
-                                                            </td>
-
-                                                            
+                                                        <tr ng-repeat="kml in selectedKMLs">
+                                                           <td>{{kml.document_name}}</td>
+                                                           <td>{{kml.document_created_at}}</td>
+                                                           <td>{{roundFileSize(kml.document_size)}}</td>
+                                                           <td>{{kml.polygon_id}}</td>
+                                                           <td><a class="btn btn-primary" href="#/kml/{{param_user_id}}/{{param_order_id}}/{{kml.klm_id}}/"><span class="glyphicon glyphicon-send"></span> Open flight config</a></td>
                                                         </tr>
                                                     </tbody>
                                             </table>
-                                            <p>Dron Images</p>
+                                        </div>
                                         </div>
                             </div>
                         </div>

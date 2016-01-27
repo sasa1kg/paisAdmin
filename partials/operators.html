@@ -22,14 +22,14 @@
                         
                             <div class="alert alert-success" ng-show="!save && save_success">
                                 <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                                <strong>{{selected.username}}</strong> Changes saved
+                                <strong>{{selected.email}}</strong> Changes saved
                             </div>
                         <div class="table-responsive">
                             <div class="col-lg-6">
                             <h2>Operator companies</h2>
                             <div class="panel panel-default">
                                 <div class="panel-heading">
-                                        <h5>Add new company <span class="pull-right cursorchg" ng-click="toggleNewCompany()">Toggle</span><h5>
+                                        <h5><span class="glyphicon glyphicon-briefcase"></span> Add new company <span class="pull-right cursorchg" ng-click="toggleNewCompany()"><span class="glyphicon glyphicon-chevron-up" ng-show="newCompanyPanel"></span><span class="glyphicon glyphicon-chevron-down" ng-show="!newCompanyPanel"></span> Toggle</span><h5>
                                 </div>
                                 <div class="panel-body" ng-show="newCompanyPanel">
                                     <p>Name</p>
@@ -42,15 +42,18 @@
                                                 [{{city.country_id}}] {{city.name}}
                                              </option>
                                     </select>
-                                    <button class="btn btn-primary pulltop" ng-click="addNewCompany()">Add new company</button>
+                                    <button class="btn btn-primary pulltop" ng-click="addNewCompany()"><span class="glyphicon glyphicon-briefcase"></span> Add new company</button>
                                 </div>
                             </div>
                             <hr>
-                            <h4>Companies</h4>
-                            <table class="table table-bordered table-hover">
+                            <h4>Companies 
+                            <button class="btn btn-link pull-right" ng-click="exportToExcel('#table1')">
+                                <span class="glyphicon glyphicon-share"></span> Export to Excel
+                            </button></h4>
+                            <table class="table table-bordered table-hover" id="table1">
                                 <thead>
                                     <tr>
-                                        <th>ID</th>
+                                        <th>Actions</th>
                                         <th>Name</th>
                                         <th>City</th>
                                     </tr>
@@ -63,21 +66,20 @@
                                     </tr>
                                 </tbody>
                             </table>
-                            
                         </div>
                         <div class="col-lg-6">
                             <h2>Operators</h2>
                             <div class="panel panel-default">
                                 <div class="panel-heading">
-                                        <h5>Add new operator <span class="pull-right cursorchg" ng-click="toggleNewOperator()">Toggle</span><h5>
+                                        <h5><span class="glyphicon glyphicon-move"></span> Add new operator <span class="pull-right cursorchg" ng-click="toggleNewOperator()"><span class="glyphicon glyphicon-chevron-up" ng-show="newOperatorPanel"></span><span class="glyphicon glyphicon-chevron-down" ng-show="!newOperatorPanel"></span> Toggle</span><h5>
                                 </div>
                                 <div class="panel-body" ng-show="newOperatorPanel">
+                                    <p>Username</p>
+                                    <input class="form-control pulltop" ng-model="newOperator.user_name">
                                     <p>First name</p>
                                     <input class="form-control pulltop" ng-model="newOperator.first_name">
                                     <p>Last name</p>
                                     <input class="form-control pulltop" ng-model="newOperator.last_name">
-                                    <p>Username</p>
-                                    <input class="form-control pulltop" ng-model="newOperator.username">
                                     <p>Password</p>
                                     <input class="form-control pulltop" ng-model="newOperator.password">
                                     <p>Phone</p>
@@ -92,24 +94,26 @@
                                                 {{company.name}}
                                              </option>
                                     </select>
-                                    <button class="btn btn-primary pulltop" ng-click="addNewOperator()">Add new operator</button>
+                                    <button class="btn btn-primary pulltop" ng-click="addNewOperator()"><span class="glyphicon glyphicon-move"></span> Add new operator</button>
                                 </div>
                             </div>
                             <hr>
-                            <h4>Operators from {{selected.name}}</h4>
-                            <table class="table table-bordered table-hover">
+                            <h4>Operators from {{selected.name}}  <button class="btn btn-link pull-right" ng-click="exportToExcel('#table2')">
+                                <span class="glyphicon glyphicon-share"></span> Export to Excel
+                            </button></h4>
+                            <table class="table table-bordered table-hover" id="table2">
                                 <thead>
                                     <tr>
                                         <th>ID</th>
                                         <th>Name</th>
-                                        <th>Username</th>
+                                        <th>E-mail</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr ng-repeat="operator in operators">
                                         <td><span class="glyphicon glyphicon-remove-sign cursorchg" ng-click="removeOperator(operator.id)"></span> {{operator.id}}</td>
                                         <td><a href="#/operatorDetailed/{{operator.id}}/">{{operator.first_name}} {{operator.last_name}}</a></td>
-                                        <td>{{operator.username}}</td>
+                                        <td>{{operator.email}}</td>
                                     </tr>
                                 </tbody>
                             </table>

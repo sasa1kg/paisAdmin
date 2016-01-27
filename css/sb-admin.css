@@ -190,6 +190,24 @@ ul.alert-dropdown {
     color: #3d8b3d;
 }
 
+.panel-purple {
+    border-color: #cc00cc;
+}
+
+.panel-purple > .panel-heading {
+    border-color: #cc00cc;
+    color: #fff;
+    background-color: #cc00cc;
+}
+
+.panel-purple > a {
+    color: #cc00cc;
+}
+
+.panel-purple > a:hover {
+    color: #660066;
+}
+
 .panel-red {
     border-color: #d9534f;
 }

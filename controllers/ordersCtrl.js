@@ -1,8 +1,15 @@
-angular.module('adminApp').controller("ordersCtrl", ["$scope", "$http", "$filter", "ServerService",  
-	function (scope, http, filter, ServerService) {
+angular.module('adminApp').controller("ordersCtrl", ["$scope", "$http", "$filter", "ServerService", "$routeParams",  
+	function (scope, http, filter, ServerService, routeParams) {
 
-	console.log("ordersCtrl!");
-	scope.msg = "ordersCtrl!";
+	scope.initFilter = function () {
+		if (routeParams.filter_id != undefined) {
+			scope.filter = routeParams.filter_id;
+		} else {
+			scope.filter = -1;
+		}
+	}
+
+	scope.initFilter();
 
 	scope.adminName = "Pais admin";
 	scope.loaded = false;
@@ -11,7 +18,7 @@ angular.module('adminApp').controller("ordersCtrl", ["$scope", "$http", "$filter
 
 	scope.loadingOrders = false;
 
-	scope.filter = -1;
+	
 	scope.pages = 1;
 
 	scope.setPage = function (page) {

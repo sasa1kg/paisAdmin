@@ -28,11 +28,13 @@
                                 <button class="btn btn-danger" ng-click="getCount(0)">Show inactive</button>
                                 <button class="btn btn-warning" ng-click="getCount(1)">Show pending</button>
                                 <button class="btn btn-success" ng-click="getCount(2)">Show active</button>
+                                <button class="btn canceledBtn" ng-click="getCount(3)">Show canceled</button>
+                                <button class="btn finishedBtn" ng-click="getCount(4)">Show finished</button>
                             </div>
                         </div>
                             <div class="alert alert-success" ng-show="!save && save_success">
                                 <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                                <strong>{{selected.username}}</strong> Changes saved
+                                <strong>{{selected.email}}</strong> Changes saved
                             </div>
                         <div class="table-responsive">
                             <div class="col-lg-6">
@@ -40,11 +42,13 @@
                             <h4 ng-if="filter == 0">Inactive orders</h4>
                             <h4 ng-if="filter == 1">Pending orders</h4>
                             <h4 ng-if="filter == 2">Active (payed) orders</h4>
+                            <h4 ng-if="filter == 3">Canceled orders</h4>
+                            <h4 ng-if="filter == 2">Finished orders</h4>
                             <p ng-show="loadingOrders">Loading orders...</p>
                             <table class="table table-bordered table-hover" ng-show="!loadingOrders">
                                 <thead>
                                     <tr>
-                                        <th>ID/Status</th>
+                                        <th>Status</br>Client ID - Order ID</th>
                                         <th>Name</th>
                                         <th>Order date</th>
                                         <th>Details/Actions</th>
@@ -52,7 +56,15 @@
                                 </thead>
                                 <tbody>
                                     <tr ng-repeat="order in orders" ng-click="select(order.order_id, order.client_id)" ng-class="{'active' : isActive(order.order_id, order.client_id)}">
-                                        <td>{{order.order_id}} <span class="badge activeBadge" ng-if="order.status==2">active</span><span class="badge" ng-if="order.status==1">pending</span><span class="badge notActiveBadge" ng-if="order.status==0">inactive</span></td>
+                                        <td>
+                                            <span class="badge activeBadge" ng-if="order.status==2">active</span>
+                                            <span class="badge" ng-if="order.status==1">pending</span>
+                                            <span class="badge notActiveBadge" ng-if="order.status==0">inactive</span>
+                                            <span class="badge canceledBadge" ng-if="order.status==3">canceled</span>
+                                            <span class="badge finishedBadge" ng-if="order.status==4">finished</span>
+                                            </br>
+                                            {{order.client_id}} - {{order.order_id}} </br>
+                                        </td>
                                         <td>{{order.name}}</td>
                                         <td>{{order.created_at}}</td>
                                         <td><a href="#/orderDetailed/{{order.order_id}}/{{order.client_id}}"><span class="glyphicon glyphicon-new-window"></span> Go to Actions</a></td>
@@ -98,7 +110,6 @@
                                                 <h5>Ordered By: {{selectedDetailedUser.first_name}} {{selectedDetailedUser.last_name}}<h5>
                                             </div>
                                             <div class="panel-body">
-                                                <p>Username: {{selectedDetailedUser.username}}</p>
                                                 <p>Email: {{selectedDetailedUser.email}}</p>
                                                 <p>Country: {{selectedDetailedUser.country_code}}</p>
                                                 <p>Phone: {{selectedDetailedUser.phone}}</p>
@@ -128,27 +139,24 @@
                                                 </table>
                                             </div>
                                         </div>
-                                        <h4 ng-if="selectedDetailed.sensors.length>0">Sensors</h4>
-                                        <div class="panel panel-default panelSmallBorderSen" ng-repeat="sen in selectedDetailed.sensors">
+                                        <h4 ng-if="selectedDetailed.stations.length>0">Sensor Stations</h4>
+                                        <div class="panel panel-default panelSmallBorderSen" ng-repeat="station in selectedDetailed.stations">
                                             <div class="panel-heading panelSmallSen">
-                                                <h5>Sensor {{sen.sensor_id}}<h5>
+                                                <h5>Station {{station.station_id}}<h5>
                                             </div>
                                             <div class="panel-body">
-                                                <p>Description/Additional remarks: {{sen.description}}</p>
-                                                <p>Type: {{getSensorTypeName(sen.type_id)}}</p>
-                                                <p>UOM: {{getUOMName(sen.uom_id)}}</p>
-                                                <span class="badge activeBadge" ng-show="sen.active==1">Active</span><span class="badge notActiveBadge" ng-show="sen.active==0">Not active</span>
-                                                <table class="table table-bordered table-hover">
+                                                <p>Description/Additional remarks: {{station.station_description}}</p>
+                                                <table class="table table-responsive table-bordered table-hover">
                                                     <thead>
                                                         <tr>
-                                                            <th>Latitude</th>
-                                                            <th>Longitude</th>
+                                                            <th>Sensor Type</th>
+                                                            <th>UOM</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr>
-                                                            <td>{{sen.latitude}}</td>
-                                                            <td>{{sen.longitude}}</td>
+                                                        <tr ng-repeat="sen in station.sensors">
+                                                            <td>{{getSensorTypeName(sen.type_id)}} <span class="badge activeBadge" ng-show="sen.active==1">Active</span><span class="badge notActiveBadge" ng-show="sen.active==0">Not active</span></td>
+                                                            <td>{{getUOMName(sen.uom_id)}}</td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
